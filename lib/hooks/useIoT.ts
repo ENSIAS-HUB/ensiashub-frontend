@@ -20,7 +20,7 @@ export function useIoT() {
 
   const contactDevices = (devices.data?.data.data ?? []).filter((d) => d.type === 'contact');
   const hanoutDevice = contactDevices.find((d) =>
-    d.name.toLowerCase().includes('epicerie') || d.name.toLowerCase().includes('hanout')
+    (d.name ?? '').toLowerCase().includes('epicerie') || (d.name ?? '').toLowerCase().includes('hanout')
   );
 
   // Use React Query's own timestamp for when data was last successfully fetched

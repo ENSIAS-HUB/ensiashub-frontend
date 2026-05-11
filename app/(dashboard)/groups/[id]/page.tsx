@@ -48,7 +48,7 @@ function GroupHeader({
 }) {
   const cat = CAT_CONFIG[group.category] ?? CAT_CONFIG.general;
   const initials = group.name.slice(0, 2).toUpperCase();
-  const modInitials = group.moderator.name.slice(0, 2).toUpperCase();
+  const modInitials = group.moderator?.name?.slice(0, 2).toUpperCase() ?? '??';
 
   return (
     <div className="rounded-xl border border-border overflow-hidden bg-card">
@@ -81,11 +81,11 @@ function GroupHeader({
           <div className="flex items-center gap-3 text-xs text-muted-foreground pt-0.5">
             <div className="flex items-center gap-1.5">
               <Avatar className="size-4">
-                <AvatarImage src={group.moderator.avatar} />
+                <AvatarImage src={group.moderator?.avatar} />
                 <AvatarFallback className="text-[8px]">{modInitials}</AvatarFallback>
               </Avatar>
               <Crown className="size-2.5 text-amber-400" />
-              <span>{group.moderator.name}</span>
+              <span>{group.moderator?.name}</span>
             </div>
             <div className="flex items-center gap-1">
               <Users className="size-3" />
@@ -433,7 +433,7 @@ export default function GroupDetailPage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">ModÃ©rateur</p>
-                    <p className="font-semibold truncate max-w-[120px]">{group.moderator.name}</p>
+                    <p className="font-semibold truncate max-w-[120px]">{group.moderator?.name}</p>
                   </div>
                 </div>
               </>

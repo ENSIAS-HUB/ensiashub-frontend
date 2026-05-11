@@ -60,7 +60,7 @@ export default function FeedPage() {
     if (!raw) return [];
     if (Array.isArray(raw)) return raw;
     if (Array.isArray(raw.data)) return raw.data;
-    if (Array.isArray(raw.data?.data)) return raw.data.data;
+    if (Array.isArray((raw as any).data?.data)) return (raw as any).data.data;
     return [];
   }, [groupsData]);
 
@@ -201,7 +201,7 @@ export default function FeedPage() {
                 <SelectValue placeholder="Choisir un groupe…" />
               </SelectTrigger>
               <SelectContent>
-                {groups.map((g) => (
+                {groups.map((g: { id: string; name: string }) => (
                   <SelectItem key={g.id} value={g.id}>
                     {g.name}
                   </SelectItem>

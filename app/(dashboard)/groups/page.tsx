@@ -79,14 +79,14 @@ function GroupCard({
           {group.moderator && (
             <>
               <Avatar className="size-5">
-                <AvatarImage src={group.moderator.avatar} />
+                <AvatarImage src={group.moderator?.avatar} />
                 <AvatarFallback className="text-[8px]">
-                  {group.moderator.name.slice(0, 2).toUpperCase()}
+                  {group.moderator?.name?.slice(0, 2).toUpperCase() ?? '??'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex items-center gap-0.5 text-xs text-muted-foreground">
                 <Crown className="size-2.5 text-amber-400" />
-                <span className="truncate max-w-[80px]">{group.moderator.name}</span>
+                <span className="truncate max-w-[80px]">{group.moderator?.name}</span>
               </div>
             </>
           )}
@@ -171,7 +171,7 @@ export default function GroupsPage() {
     onError: () => toast.error('Erreur lors de la demande.'),
   });
 
-  const allGroups = useMemo(() => {
+  const allGroups = useMemo<Group[]>(() => {
     const raw = data?.data;
     if (!raw) return [];
     if (Array.isArray(raw)) return raw;

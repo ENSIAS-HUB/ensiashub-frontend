@@ -40,6 +40,7 @@ const ROLE_LABELS: Record<RoleType, string> = {
   president_club: 'Président de Club',
   chef_scolarite: 'Chef de Scolarité',
   admin:          'Admin',
+  superAdmin:     'Super Admin',
 };
 
 const ROLE_COLOR: Record<RoleType, string> = {
@@ -48,6 +49,7 @@ const ROLE_COLOR: Record<RoleType, string> = {
   president_club: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
   chef_scolarite: 'bg-[#B01817]/20 text-[#B01817] border-[#B01817]/30',
   admin:          'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  superAdmin:     'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
 };
 
 // ── Stat card ─────────────────────────────────────────────────────────────────
@@ -474,7 +476,7 @@ export default function AdminPage() {
     return 0;
   })();
   // IotDeviceController returns a raw array (no wrapper, no paginator)
-  const iotArray: any[] = devicesData?.data ?? [];
+  const iotArray: any[] = Array.isArray(devicesData) ? devicesData : (devicesData as any)?.data ?? [];
   const totalDevices  = Array.isArray(iotArray) ? iotArray.length : 0;
   const activeDevices = Array.isArray(iotArray) ? iotArray.filter((d: any) => d.statutActuel).length : 0;
 

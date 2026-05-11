@@ -66,7 +66,7 @@ function MenuItemCard({ item, onAdd }: { item: MenuItem; onAdd: (item: MenuItem)
         )}
         <div className="flex items-center justify-between mt-2">
           <Badge variant="outline" className="text-xs">{item.category}</Badge>
-          <span className="text-sm font-bold text-[#B01817]">{item.price.toFixed(2)} MAD</span>
+          <span className="text-sm font-bold text-[#B01817]">{item.price != null ? item.price.toFixed(2) : '—'} MAD</span>
         </div>
       </div>
       <Button
