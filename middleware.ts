@@ -10,31 +10,39 @@ const PROTECTED_PREFIXES = [
   '/smart-campus',
   '/map',
   '/admin',
+  '/settings',
 ];
 
-// Routes that are always public
-const PUBLIC_PATHS = ['/login', '/callback'];
+// Auth routes (redirect to /feed if already logged in)
+const AUTH_PATHS = ['/login', '/callback', '/complete-profile'];
+
+// Always public — no auth check at all
+const ALWAYS_PUBLIC = ['/'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if the path is public
-  const isPublic = PUBLIC_PATHS.some(
+  // Landing page and public marketing pages — always accessible
+  if (ALWAYS_PUBLIC.some((p) => pathname === p)) {
+    return NextResponse.next();
+  }
+
+  // Auth pages — always accessible (login, callback, complete-profile)
+  const isAuthPath = AUTH_PATHS.some(
     (p) => pathname === p || pathname.startsWith(p + '/')
   );
-  if (isPublic) return NextResponse.next();
+  if (isAuthPath) return NextResponse.next();
 
-  // Check if the path requires auth
+  // Protected routes — require a valid token cookie
   const isProtected = PROTECTED_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(p + '/')
   );
   if (!isProtected) return NextResponse.next();
 
-  // Read the token cookie set by the callback page
   const token = request.cookies.get('token')?.value;
-
   if (!token) {
     const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -43,13 +51,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimisation)
-     * - favicon.ico
-     * - public folder assets
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
