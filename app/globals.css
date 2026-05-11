@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -7,8 +7,18 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /*
+   * ── DUAL-FONT SYSTEM ───────────────────────────────────────────────────────
+   * font-sans  → Inter        : UI workhorse — nav, buttons, body, labels, p
+   * font-serif → Newsreader   : Impact only — h1, h2, hero titles, big stats
+   * font-mono  → GeistMono    : Code, badges, timestamps, metadata
+   * ─────────────────────────────────────────────────────────────────────────
+   */
+  --font-sans:    var(--font-inter);
+  --font-serif:   var(--font-newsreader);
+  --font-mono:    var(--font-geist-mono);
+  --font-display: var(--font-display);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -53,96 +63,98 @@
 }
 
 /* =========================================
-   ENSIAS Hub Design System — Light Mode
+   ENSIAS Hub Design System - Light Mode
+   Railway-grade surface system
    ========================================= */
 :root {
-  /* ENSIAS Brand */
+  /* ENSIAS Brand - DO NOT CHANGE */
   --ensias-red: #B01817;
   --ensias-red-light: #D42B2A;
   --ensias-red-dark: #8A1211;
   --ensias-red-glow: rgba(176, 24, 23, 0.3);
 
-  /* shadcn theme variables — Light */
-  --background: oklch(0.984 0.003 247.858);      /* slate-50  */
-  --foreground: oklch(0.208 0.042 265.755);       /* slate-900 */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.208 0.042 265.755);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.208 0.042 265.755);
-  --primary: oklch(0.44 0.21 27.4);              /* ENSIAS red #B01817 */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.968 0.007 247.896);        /* slate-100 */
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417); /* slate-500 */
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
+  /* Railway-grade Light tokens */
+  --background: #F8F9FB;
+  --foreground: #0F1117;
+  --card: #FFFFFF;
+  --card-foreground: #0F1117;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F1117;
+  --primary: #B01817;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F3F6;
+  --secondary-foreground: #0F1117;
+  --muted: #F1F3F6;
+  --muted-foreground: #6B7280;
+  --accent: #F1F3F6;
+  --accent-foreground: #0F1117;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);           /* slate-200 */
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.44 0.21 27.4);                 /* ENSIAS red ring */
-  --chart-1: oklch(0.44 0.21 27.4);
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.08);
+  --ring: #B01817;
+  --chart-1: #B01817;
   --chart-2: oklch(0.6 0.12 200);
   --chart-3: oklch(0.55 0.15 160);
   --chart-4: oklch(0.65 0.18 270);
   --chart-5: oklch(0.7 0.14 80);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-primary: oklch(0.44 0.21 27.4);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.44 0.21 27.4);
+  --radius: 0.5rem;
+  --sidebar: #F0F1F4;
+  --sidebar-foreground: #0F1117;
+  --sidebar-primary: #B01817;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E8EAEE;
+  --sidebar-accent-foreground: #0F1117;
+  --sidebar-border: rgba(0, 0, 0, 0.08);
+  --sidebar-ring: #B01817;
 }
 
 /* =========================================
-   ENSIAS Hub Design System — Dark Mode
+   ENSIAS Hub Design System - Dark Mode
+   Railway-grade depth system
    ========================================= */
 .dark {
-  /* ENSIAS Brand */
+  /* ENSIAS Brand - DO NOT CHANGE */
   --ensias-red: #B01817;
   --ensias-red-light: #D42B2A;
   --ensias-red-dark: #8A1211;
   --ensias-red-glow: rgba(176, 24, 23, 0.3);
 
-  /* shadcn theme variables — Dark  (60-30-10 rule) */
-  --background: oklch(0.129 0.042 264.695);      /* slate-950 — 60% */
-  --foreground: oklch(0.984 0.003 247.858);       /* slate-50  */
-  --card: oklch(0.208 0.042 265.755);            /* slate-800 — 30% */
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.44 0.21 27.4);             /* ENSIAS red — 10% */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.188 0.041 265.522);        /* slate-900 */
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);  /* slate-400 */
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
+  /* Railway-grade Dark tokens */
+  --background: #0B0D0F;
+  --foreground: #F0F2F5;
+  --card: #111318;
+  --card-foreground: #F0F2F5;
+  --popover: #111318;
+  --popover-foreground: #F0F2F5;
+  --primary: #B01817;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1A1D23;
+  --secondary-foreground: #F0F2F5;
+  --muted: #1A1D23;
+  --muted-foreground: #6B7280;
+  --accent: #1A1D23;
+  --accent-foreground: #F0F2F5;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.44 0.21 27.4);
-  --chart-1: oklch(0.44 0.21 27.4);
+  --border: rgba(255, 255, 255, 0.07);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #B01817;
+  --chart-1: #B01817;
   --chart-2: oklch(0.6 0.12 200);
   --chart-3: oklch(0.55 0.15 160);
   --chart-4: oklch(0.65 0.18 270);
   --chart-5: oklch(0.7 0.14 80);
-  --sidebar: oklch(0.188 0.041 265.522);          /* slate-900 sidebar */
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.44 0.21 27.4);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.44 0.21 27.4);
+  --sidebar: #0E1013;
+  --sidebar-foreground: #F0F2F5;
+  --sidebar-primary: #B01817;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1A1D23;
+  --sidebar-accent-foreground: #F0F2F5;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-ring: #B01817;
 }
 
 /* =========================================
-   ENSIAS Hub — Custom Animations & Utilities
+   ENSIAS Hub - Custom Animations & Utilities
    ========================================= */
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.1; }
@@ -170,6 +182,21 @@
 .animate-spin-slow  { animation: spin-slow 3s linear infinite; }
 .animate-heart-bounce { animation: heart-bounce 0.4s ease-in-out; }
 
+/* Railway-grade surface utility classes */
+.surface-1 {
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.surface-2 {
+  background: var(--muted);
+  border: 1px solid var(--border);
+}
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
 /* Glassmorphism utility */
 .glass {
   backdrop-filter: blur(12px);
@@ -184,10 +211,28 @@
 }
 
 /* Scrollbar styling */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: oklch(0.372 0.044 257.287); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: oklch(0.44 0.21 27.4); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #B01817; }
+
+/* Skip to content link for accessibility */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: #B01817;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 0 0 6px 6px;
+  transition: top 0.1s;
+}
+.skip-to-content:focus {
+  top: 0;
+}
 
 @layer base {
   * {
@@ -195,13 +240,20 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 14px;
+    line-height: 1.5;
   }
   html {
     @apply font-sans;
   }
 
-  /* Prevent browser autofill (yellow) from breaking light/dark theme.
-     Uses theme tokens and preserves Tailwind ring/shadow variables. */
+  /* Focus visible ring for accessibility */
+  *:focus-visible {
+    outline: 2px solid rgba(176, 24, 23, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* Prevent browser autofill from breaking light/dark theme */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,

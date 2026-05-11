@@ -1,8 +1,9 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import {
   Zap,
   Users,
@@ -13,12 +14,28 @@ import {
   Settings,
   LogOut,
   ShieldCheck,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useAuthStore } from '@/lib/store/authStore';
 import { logout as apiLogout } from '@/lib/api/auth';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ThemeToggle';
+
+const ROLE_LABELS: Record<string, string> = {
+  etudiant:       'Étudiant',
+  delegue:        'Délégué',
+  chef_scolarite: 'Scolarité',
+  president_club: 'Président',
+  admin:          'Admin',
+};
 
 const navItems = [
   { href: '/feed',          icon: Zap,              label: 'Feed' },
@@ -29,14 +46,36 @@ const navItems = [
   { href: '/map',           icon: Map,              label: 'Carte' },
 ];
 
+const SIDEBAR_WIDTH = 220;
+const SIDEBAR_COLLAPSED = 52;
+const LS_KEY = 'sidebar-collapsed';
+
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(LS_KEY);
+      if (stored !== null) setCollapsed(stored === 'true');
+    } catch {}
+  }, []);
+
+  const toggleCollapsed = () => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try { localStorage.setItem(LS_KEY, String(next)); } catch {}
+      return next;
+    });
+  };
 
   const initials = user?.name
-    ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    ? user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
     : 'EH';
+
+  const roleLabel = user?.role ? (ROLE_LABELS[user.role] ?? user.role) : null;
 
   const handleLogout = async () => {
     try { await apiLogout(); } finally {
@@ -46,96 +85,278 @@ export function Sidebar() {
   };
 
   return (
-    <motion.aside
-      className="flex h-full w-[240px] shrink-0 flex-col bg-sidebar border-r border-sidebar-border"
-      initial={{ x: -240, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.05 }}
-    >
-      {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 py-5">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-[#B01817] shadow-[0_0_12px_rgba(176,24,23,0.4)]">
-          <Zap className="size-4 text-white" fill="white" />
+    <TooltipProvider delayDuration={200}>
+      <motion.aside
+        className="flex h-full shrink-0 flex-col bg-sidebar border-r border-sidebar-border overflow-hidden"
+        animate={{ width: collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_WIDTH }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        initial={false}
+      >
+        {/* Logo area */}
+        <div
+          className={cn(
+            'flex items-center gap-2.5 py-4 shrink-0',
+            collapsed ? 'justify-center px-0' : 'px-4'
+          )}
+        >
+          <div className="flex size-7 items-center justify-center rounded-md bg-[#B01817] shadow-[0_0_10px_rgba(176,24,23,0.35)] shrink-0">
+            <Zap className="size-3.5 text-white" fill="white" />
+          </div>
+          <AnimatePresence initial={false}>
+            {!collapsed && (
+              <motion.span
+                className="text-[13px] font-semibold tracking-tight whitespace-nowrap overflow-hidden"
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                ENSIAS Hub
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
-        <span className="text-base font-bold tracking-tight">ENSIAS Hub</span>
-      </div>
 
-      <Separator className="opacity-50" />
+        <div className="h-px bg-sidebar-border shrink-0" />
 
-      {/* User info */}
-      <div className="flex items-center gap-3 px-4 py-4">
-        <Avatar className="size-9 ring-2 ring-[#B01817]/30">
-          <AvatarImage src={user?.avatar} alt={user?.name} />
-          <AvatarFallback className="bg-[#B01817]/20 text-[#B01817] text-xs font-semibold">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium leading-tight">{user?.name ?? 'Étudiant'}</p>
-          {user?.filiere && (
-            <p className="truncate text-xs text-muted-foreground">{user.filiere}</p>
+        {/* User area */}
+        <div
+          className={cn(
+            'flex items-center gap-2.5 py-3 shrink-0',
+            collapsed ? 'justify-center px-0' : 'px-3'
+          )}
+        >
+          {collapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Avatar className="size-7 ring-1 ring-[#B01817]/30 cursor-default shrink-0">
+                  <AvatarImage src={user?.avatar} alt={user?.name} />
+                  <AvatarFallback className="bg-[#B01817]/15 text-[#B01817] text-[10px] font-semibold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-sans text-xs">
+                {user?.name ?? 'Étudiant'}
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <>
+              <Avatar className="size-7 ring-1 ring-[#B01817]/30 shrink-0">
+                <AvatarImage src={user?.avatar} alt={user?.name} />
+                <AvatarFallback className="bg-[#B01817]/15 text-[#B01817] text-[10px] font-semibold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-medium leading-tight">{user?.name ?? 'Étudiant'}</p>
+                {roleLabel && (
+                  <p className="font-mono text-[10px] text-[#B01817]/70 uppercase tracking-wide leading-tight mt-0.5">
+                    {roleLabel}
+                  </p>
+                )}
+              </div>
+            </>
           )}
         </div>
-      </div>
 
-      <Separator className="opacity-50" />
+        <div className="h-px bg-sidebar-border shrink-0" />
 
-      {/* Navigation */}
-      <nav className="flex-1 px-2 py-3 space-y-0.5">
-        {navItems.map(({ href, icon: Icon, label }) => {
-          const isActive = pathname === href || pathname.startsWith(href + '/');
-          return (
-            <Link key={href} href={href}>
-              <div
+        {/* Navigation */}
+        <nav
+          role="navigation"
+          aria-label="Main navigation"
+          className="flex-1 px-1.5 py-2 space-y-0.5 overflow-y-auto"
+        >
+          {!collapsed && (
+            <p className="px-2 pb-1.5 pt-0.5 text-[10px] font-mono uppercase tracking-widest text-muted-foreground/50 select-none">
+              Navigation
+            </p>
+          )}
+          {navItems.map(({ href, icon: Icon, label }) => {
+            const isActive = pathname === href || pathname.startsWith(href + '/');
+            if (collapsed) {
+              return (
+                <Tooltip key={href}>
+                  <TooltipTrigger asChild>
+                    <Link href={href}>
+                      <div
+                        className={cn(
+                          'flex items-center justify-center h-8 w-8 mx-auto rounded-md transition-colors duration-150',
+                          isActive
+                            ? 'bg-[#B01817]/10 text-[#B01817]'
+                            : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
+                        )}
+                        aria-label={label}
+                      >
+                        <Icon className="size-4 shrink-0" />
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="font-sans text-xs">
+                    {label}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            }
+            return (
+              <Link key={href} href={href}>
+                <div
+                  className={cn(
+                    'flex items-center gap-2.5 h-8 rounded-md px-2.5 text-[13px] font-medium transition-colors duration-150',
+                    isActive
+                      ? 'bg-[#B01817]/10 text-[#B01817]'
+                      : 'text-[oklch(0.45_0.04_260)] hover:bg-white/5 hover:text-foreground'
+                  )}
+                >
+                  <Icon className="size-4 shrink-0" />
+                  <span>{label}</span>
+                </div>
+              </Link>
+            );
+          })}
+
+          {user?.role === 'chef_scolarite' && (
+            <>
+              {!collapsed && (
+                <p className="px-2 pb-1.5 pt-3 text-[10px] font-mono uppercase tracking-widest text-muted-foreground/50 select-none">
+                  Administration
+                </p>
+              )}
+              {collapsed ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/admin">
+                      <div
+                        className={cn(
+                          'flex items-center justify-center h-8 w-8 mx-auto rounded-md transition-colors duration-150',
+                          pathname.startsWith('/admin')
+                            ? 'bg-[#B01817]/10 text-[#B01817]'
+                            : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
+                        )}
+                        aria-label="Admin Panel"
+                      >
+                        <ShieldCheck className="size-4 shrink-0" />
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="font-sans text-xs">
+                    Admin Panel
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Link href="/admin">
+                  <div
+                    className={cn(
+                      'flex items-center gap-2.5 h-8 rounded-md px-2.5 text-[13px] font-medium transition-colors duration-150',
+                      pathname.startsWith('/admin')
+                        ? 'bg-[#B01817]/10 text-[#B01817]'
+                        : 'text-[oklch(0.45_0.04_260)] hover:bg-white/5 hover:text-foreground'
+                    )}
+                  >
+                    <ShieldCheck className="size-4 shrink-0" />
+                    <span>Admin Panel</span>
+                  </div>
+                </Link>
+              )}
+            </>
+          )}
+        </nav>
+
+        {/* Bottom actions */}
+        <div className="h-px bg-sidebar-border shrink-0" />
+        <div className="px-1.5 py-2 space-y-0.5 shrink-0">
+          {/* Theme toggle */}
+          <div className={cn('flex', collapsed ? 'justify-center' : '')}>
+            <ThemeToggle compact collapsed={collapsed} />
+          </div>
+
+          {/* Settings */}
+          {collapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/settings">
+                  <div
+                    className={cn(
+                      'flex items-center justify-center h-8 w-8 mx-auto rounded-md transition-colors duration-150',
+                      pathname === '/settings'
+                        ? 'bg-[#B01817]/10 text-[#B01817]'
+                        : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
+                    )}
+                    aria-label="Paramètres"
+                  >
+                    <Settings className="size-4 shrink-0" />
+                  </div>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-sans text-xs">
+                Paramètres
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <Link href="/settings">
+              <div className="flex items-center gap-2.5 h-8 rounded-md px-2.5 text-[13px] text-muted-foreground hover:bg-white/5 hover:text-foreground transition-colors duration-150">
+                <Settings className="size-4 shrink-0" />
+                <span>Paramètres</span>
+              </div>
+            </Link>
+          )}
+
+          {/* Logout */}
+          {collapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleLogout}
+                  aria-label="Déconnexion"
+                  className="flex items-center justify-center h-8 w-8 mx-auto rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors duration-150"
+                >
+                  <LogOut className="size-4 shrink-0" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-sans text-xs">
+                Déconnexion
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2.5 h-8 rounded-md px-2.5 text-[13px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors duration-150"
+            >
+              <LogOut className="size-4 shrink-0" />
+              <span>Déconnexion</span>
+            </button>
+          )}
+
+          {/* Collapse toggle */}
+          <div className="h-px bg-sidebar-border my-1" />
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={toggleCollapsed}
+                aria-label={collapsed ? 'Ouvrir la barre latérale' : 'Réduire la barre latérale'}
                 className={cn(
-                  'group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-150',
-                  isActive
-                    ? 'bg-[#B01817]/15 text-[#B01817] border-l-[3px] border-[#B01817] pl-[9px]'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground border-l-[3px] border-transparent'
+                  'flex items-center h-8 rounded-md text-[13px] text-muted-foreground hover:bg-white/5 hover:text-foreground transition-colors duration-150',
+                  collapsed ? 'justify-center w-8 mx-auto' : 'w-full gap-2.5 px-2.5'
                 )}
               >
-                <Icon className={cn('size-4 shrink-0 transition-colors', isActive ? 'text-[#B01817]' : '')} />
-                {label}
-              </div>
-            </Link>
-          );
-        })}
-
-        {user?.role === 'chef_scolarite' && (
-          <>
-            <Separator className="my-2 opacity-50" />
-            <Link href="/admin">
-              <div className={cn(
-                'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-150 border-l-[3px] border-transparent',
-                pathname.startsWith('/admin')
-                  ? 'bg-[#B01817]/15 text-[#B01817] border-[#B01817]'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              )}>
-                <ShieldCheck className="size-4 shrink-0" />
-                Admin Panel
-              </div>
-            </Link>
-          </>
-        )}
-      </nav>
-
-      {/* Bottom actions */}
-      <Separator className="opacity-50" />
-      <div className="px-2 py-3 space-y-0.5">
-        <Link href="/settings">
-          <div className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-150 border-l-[3px] border-transparent">
-            <Settings className="size-4 shrink-0" />
-            Paramètres
-          </div>
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-150 border-l-[3px] border-transparent"
-        >
-          <LogOut className="size-4 shrink-0" />
-          Déconnexion
-        </button>
-      </div>
-    </motion.aside>
+                {collapsed ? (
+                  <ChevronRight className="size-4 shrink-0" />
+                ) : (
+                  <>
+                    <ChevronLeft className="size-4 shrink-0" />
+                    <span>Réduire</span>
+                    <span className="ml-auto font-mono text-[10px] text-muted-foreground/50">⌘B</span>
+                  </>
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="font-sans text-xs">
+              {collapsed ? 'Ouvrir (⌘B)' : 'Réduire (⌘B)'}
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </motion.aside>
+    </TooltipProvider>
   );
 }
