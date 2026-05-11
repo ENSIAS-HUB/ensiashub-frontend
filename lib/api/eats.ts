@@ -10,5 +10,11 @@ export const createMenuItem = (data: Partial<MenuItem>) =>
 export const getOrders = () =>
   apiClient.get<PaginatedResponse<Order>>('/orders');
 
+export const getMyOrders = () =>
+  apiClient.get<ApiResponse<Order[]>>('/orders', { params: { my: true } });
+
 export const createOrder = (lines: Array<{ menu_item_id: string; quantity: number }>) =>
   apiClient.post<ApiResponse<Order>>('/orders', { lines });
+
+export const cancelOrder = (id: string) =>
+  apiClient.delete<ApiResponse<void>>(`/orders/${id}`);

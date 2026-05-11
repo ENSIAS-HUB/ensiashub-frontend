@@ -1,8 +1,10 @@
 import apiClient from './client';
 import type { Publication, Comment, ApiResponse, PaginatedResponse } from '@/lib/types';
 
-export const getPublications = (page = 1) =>
-  apiClient.get<PaginatedResponse<Publication>>('/publications', { params: { page } });
+export const getPublications = (page = 1, groupId?: string) =>
+  apiClient.get<PaginatedResponse<Publication>>('/publications', {
+    params: { page, ...(groupId ? { group_id: groupId } : {}) },
+  });
 
 export const createPublication = (data: { content: string; group_id: string; media_url?: string }) =>
   apiClient.post<ApiResponse<Publication>>('/publications', data);

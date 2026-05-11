@@ -4,6 +4,9 @@ import type { Group, ApiResponse, PaginatedResponse, User } from '@/lib/types';
 export const getGroups = () =>
   apiClient.get<PaginatedResponse<Group>>('/groups');
 
+export const getGroup = (id: string) =>
+  apiClient.get<ApiResponse<Group>>(`/groups/${id}`);
+
 export const createGroup = (data: Partial<Group>) =>
   apiClient.post<ApiResponse<Group>>('/groups', data);
 

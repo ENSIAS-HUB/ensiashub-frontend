@@ -1,4 +1,4 @@
-export type RoleType = 'etudiant' | 'delegue' | 'president_club' | 'chef_scolarite';
+export type RoleType = 'etudiant' | 'delegue' | 'president_club' | 'chef_scolarite' | 'admin' | 'superAdmin';
 export type ValidationStatus = 'pending' | 'approved' | 'rejected';
 export type OrderStatus = 'en_attente' | 'en_preparation' | 'pret' | 'livre' | 'annule';
 export type DeviceType = 'contact' | 'vibration';
@@ -11,7 +11,10 @@ export interface User {
   email: string;
   avatar?: string;
   role: RoleType;
-  filiere?: string;
+  roles?: RoleType[];
+  filiere?: string | null;
+  annee?: string | null;
+  bio?: string | null;
   created_at: string;
 }
 
@@ -22,7 +25,10 @@ export interface Group {
   category: GroupCategory;
   cover_image?: string;
   members_count: number;
-  moderator: User;
+  moderator?: User | null;
+  /** 'none' | 'pending' | 'approved' | 'rejected' | 'banned' */
+  membership_status?: string;
+  is_member?: boolean;
   created_at: string;
 }
 
@@ -32,7 +38,7 @@ export interface Publication {
   media_url?: string;
   status: ValidationStatus;
   author: User;
-  group: Group;
+  group?: Group | null;
   reactions_count: number;
   comments_count: number;
   user_reacted: boolean;
@@ -49,16 +55,21 @@ export interface Comment {
 
 export interface Filiere {
   id: string;
-  name: string;
-  code: string;
+  nom: string;
+  name?: string; // alias for compatibility
+  code?: string;
+  modules_count?: number;
   modules?: Module[];
 }
 
 export interface Module {
   id: string;
-  name: string;
+  nom: string;
+  name?: string; // alias for compatibility
   filiere_id: string;
-  semester: number;
+  semestre?: string;
+  semester?: number;  // alias for compatibility
+  annee?: number;
   documents?: Document[];
 }
 
@@ -76,11 +87,15 @@ export interface Document {
 
 export interface MenuItem {
   id: string;
-  name: string;
+  nomPlat?: string;
+  name?: string;
   description?: string;
-  price: number;
-  category: string;
-  available: boolean;
+  prix?: number;
+  price?: number;
+  categorie?: string;
+  category?: string;
+  estDisponible?: boolean;
+  available?: boolean;
   image_url?: string;
 }
 
@@ -102,11 +117,16 @@ export interface OrderLine {
 
 export interface IoTDevice {
   id: string;
-  name: string;
-  type: DeviceType;
-  location: string;
-  is_active: boolean;
+  idMateriel: string;
+  name?: string;
+  typeCapteur: string;
+  type?: DeviceType;
+  emplacement: string;
+  location?: string;
+  statutActuel: boolean;
+  is_active?: boolean;
   last_event?: DeviceEvent;
+  laundry_machine_id?: string | null;
 }
 
 export interface LaundryMachine {

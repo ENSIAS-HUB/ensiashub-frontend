@@ -1,33 +1,91 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Radio, RefreshCw, Store, WashingMachine } from 'lucide-react';
+import { Radio, RefreshCw, Store, WashingMachine, WifiOff, AlertCircle } from 'lucide-react';
 import { DeviceStatusCard } from '@/components/iot/DeviceStatusCard';
 import { LaundryMachineGrid } from '@/components/iot/LaundryMachineGrid';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { useIoT } from '@/lib/hooks/useIoT';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+
+const REFETCH_SECONDS = 10;
 
 export default function SmartCampusPage() {
-  const { devices, laundryMachines, hanoutDevice, isLoading, lastUpdated } = useIoT();
+  const { devices, laundryMachines, hanoutDevice, isLoading, isError, refetch, lastUpdated, refetchInterval } =
+    useIoT();
 
-  const nonHanoutDevices = devices.filter(
-    (d) => d.id !== hanoutDevice?.id
-  );
+  const nonHanoutDevices = devices.filter((d) => d.id !== hanoutDevice?.id);
+
+  // Countdown to next auto-refresh
+  const [countdown, setCountdown] = useState(REFETCH_SECONDS);
+
+  useEffect(() => {
+    setCountdown(REFETCH_SECONDS);
+  }, [lastUpdated]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown((c) => (c <= 1 ? REFETCH_SECONDS : c - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [refetchInterval]);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <h2 className="text-base font-semibold flex items-center gap-2">
           <Radio className="size-4 text-[#B01817]" />
           Smart Campus IoT
         </h2>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <RefreshCw className="size-3 animate-spin" style={{ animationDuration: '3s' }} />
-          Mise à jour auto toutes les 10s
+
+        <div className="flex items-center gap-3">
+          {/* Hors ligne indicator */}
+          {isError && (
+            <span className="flex items-center gap-1.5 text-xs text-destructive font-medium">
+              <WifiOff className="size-3.5" />
+              Hors ligne
+            </span>
+          )}
+
+          {/* LIVE badge */}
+          {!isError && !isLoading && (
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-green-400">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-green-400" />
+              </span>
+              LIVE
+            </span>
+          )}
+
+          {/* Countdown */}
+          <span className="flex items-center gap-1 text-xs text-muted-foreground tabular-nums">
+            <RefreshCw className={cn('size-3', isLoading && 'animate-spin')} />
+            {isLoading ? 'Actualisation…' : `Prochain rafraîchissement dans ${countdown}s`}
+          </span>
         </div>
       </div>
+
+      {/* Error state */}
+      {isError && (
+        <div className="flex flex-col items-center gap-4 rounded-xl border border-destructive/30 bg-destructive/10 p-8 text-center">
+          <AlertCircle className="size-10 text-destructive" />
+          <div>
+            <p className="font-semibold">Impossible de joindre les capteurs</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Vérifiez que le backend IoT est accessible.
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={refetch} className="gap-2">
+            <RefreshCw className="size-4" />
+            Réessayer
+          </Button>
+        </div>
+      )}
 
       {/* Épicerie / Hanout section */}
       <section className="space-y-3">
@@ -51,20 +109,25 @@ export default function SmartCampusPage() {
                 {hanoutDevice.is_active && (
                   <>
                     <span className="absolute inset-0 rounded-full bg-green-400/20 animate-ping-slow" />
-                    <span className="absolute inset-2 rounded-full bg-green-400/10 animate-ping-slow" style={{ animationDelay: '0.3s' }} />
+                    <span
+                      className="absolute inset-2 rounded-full bg-green-400/10 animate-ping-slow"
+                      style={{ animationDelay: '0.3s' }}
+                    />
                   </>
                 )}
-                <div className={`relative flex size-20 items-center justify-center rounded-full text-2xl font-bold ${
-                  hanoutDevice.is_active ? 'bg-green-500/20 border-2 border-green-500/40' : 'bg-slate-700/50 border-2 border-slate-600'
-                }`}>
+                <div
+                  className={`relative flex size-20 items-center justify-center rounded-full text-2xl font-bold ${
+                    hanoutDevice.is_active
+                      ? 'bg-green-500/20 border-2 border-green-500/40'
+                      : 'bg-slate-700/50 border-2 border-slate-600'
+                  }`}
+                >
                   {hanoutDevice.is_active ? '🟢' : '🔴'}
                 </div>
               </div>
 
               <div className="text-center sm:text-left">
-                <p className="text-xl font-bold">
-                  {hanoutDevice.is_active ? 'OUVERT' : 'FERMÉ'}
-                </p>
+                <p className="text-xl font-bold">{hanoutDevice.is_active ? 'OUVERT' : 'FERMÉ'}</p>
                 <p className="text-sm text-muted-foreground mt-1">{hanoutDevice.name}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{hanoutDevice.location}</p>
                 {hanoutDevice.last_event && (
@@ -115,11 +178,18 @@ export default function SmartCampusPage() {
         </>
       )}
 
-      {/* Last refresh info */}
-      <p className="text-xs text-muted-foreground text-center pb-4">
-        Données en temps réel · Actualisé à{' '}
-        {lastUpdated.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-      </p>
+      {/* Last refresh timestamp */}
+      {!isError && (
+        <p className="text-xs text-muted-foreground text-center pb-4">
+          Données en temps réel · Actualisé à{' '}
+          {lastUpdated.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          })}
+        </p>
+      )}
     </div>
   );
 }
+
