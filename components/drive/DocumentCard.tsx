@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { FileText, Download, Eye, BookOpen, FlaskConical, FileCheck, GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import type { Document, DocumentType } from '@/lib/types';
 
 const TYPE_CONFIG: Record<DocumentType, { label: string; color: string; icon: typeof FileText }> = {
@@ -25,55 +26,82 @@ interface DocumentCardProps {
 
 export function DocumentCard({ document: doc }: DocumentCardProps) {
   const { label, color, icon: TypeIcon } = TYPE_CONFIG[doc.type] ?? TYPE_CONFIG.cours;
-  const initials = doc.uploader.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
     <motion.div
-      className="group relative rounded-xl border border-border bg-card p-4 space-y-3 hover:border-[#B01817]/30 hover:shadow-[0_0_12px_rgba(176,24,23,0.08)] transition-all"
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      className="group flex items-center gap-4 px-4 py-3.5
+        border-b border-border/50 last:border-0
+        hover:bg-white/[0.02] transition-colors duration-150"
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       {/* Type icon */}
-      <div className="flex items-start justify-between">
-        <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-          <TypeIcon className="size-5 text-muted-foreground" />
+      <div className={cn(
+        'shrink-0 flex size-10 items-center justify-center rounded-xl border',
+        color
+      )}>
+        <TypeIcon className="size-5" />
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="text-sm font-semibold truncate">{doc.title}</p>
+          <Badge variant="outline"
+            className={`shrink-0 text-[9px] px-1.5 h-4 font-bold tracking-wider border ${color}`}>
+            {label}
+          </Badge>
         </div>
-        <Badge variant="outline" className={`text-[10px] px-1.5 h-5 font-semibold tracking-wide border ${color}`}>
-          {label}
-        </Badge>
+        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+          {doc.module?.name && (
+            <span className="text-[11px] text-muted-foreground">
+              {doc.module.name}
+            </span>
+          )}
+          {doc.module?.semester && (
+            <>
+              <span className="text-muted-foreground/30">·</span>
+              <span className="text-[11px] text-muted-foreground font-mono">
+                S{doc.module.semester}
+              </span>
+            </>
+          )}
+          {doc.file_size > 0 && (
+            <>
+              <span className="text-muted-foreground/30">·</span>
+              <span className="text-[11px] text-muted-foreground font-mono">
+                {formatSize(doc.file_size)}
+              </span>
+            </>
+          )}
+          {doc.uploader?.name && doc.uploader.name !== 'Inconnu' && (
+            <>
+              <span className="text-muted-foreground/30">·</span>
+              <span className="text-[11px] text-muted-foreground">
+                {doc.uploader.name}
+              </span>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Title & meta */}
-      <div>
-        <p className="text-sm font-semibold leading-snug line-clamp-2">{doc.title}</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          {doc.module.name} · Sem. {doc.module.semester}
-        </p>
-        <p className="text-xs text-muted-foreground">Par : {doc.uploader.name}</p>
-      </div>
-
-      {/* Footer */}
-      <div className="flex items-center gap-1.5 pt-1 border-t border-border/50">
-        <span className="text-xs text-muted-foreground mr-auto">
-          {formatSize(doc.file_size)}
-        </span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-7 text-muted-foreground hover:text-foreground"
-          asChild
-        >
-          <a href={doc.file_url} target="_blank" rel="noopener noreferrer">
+      {/* Actions — visible on hover */}
+      <div className="shrink-0 flex items-center gap-1
+        opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button variant="ghost" size="icon"
+          className="size-7 rounded-lg text-muted-foreground
+            hover:text-foreground hover:bg-muted"
+          asChild>
+          <a href={doc.preview_url || doc.file_url} target="_blank" rel="noopener noreferrer">
             <Eye className="size-3.5" />
           </a>
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-7 text-muted-foreground hover:text-[#B01817]"
-          asChild
-        >
-          <a href={doc.file_url} download>
+        <Button variant="ghost" size="icon"
+          className="size-7 rounded-lg text-muted-foreground
+            hover:text-[#B01817] hover:bg-[#B01817]/10"
+          asChild>
+          <a href={doc.download_url || doc.file_url} download>
             <Download className="size-3.5" />
           </a>
         </Button>

@@ -78,6 +78,8 @@ export interface Document {
   title: string;
   type: DocumentType;
   file_url: string;
+  preview_url: string;
+  download_url: string;
   file_size: number;
   status: ValidationStatus;
   uploader: User;

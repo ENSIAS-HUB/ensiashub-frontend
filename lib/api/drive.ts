@@ -21,7 +21,7 @@ export const deleteModule = (id: string) =>
 
 export const getDocuments = (moduleId?: string, filiereId?: string) =>
   apiClient.get<PaginatedResponse<Document>>('/documents', {
-    params: { module_id: moduleId, filiere_id: filiereId },
+    params: { module_pedagogique_id: moduleId, filiere_id: filiereId },
   });
 
 export const uploadDocument = (formData: FormData, onUploadProgress?: (pct: number) => void) =>

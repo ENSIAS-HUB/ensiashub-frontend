@@ -11,13 +11,17 @@ import {
   CheckCircle2,
   XCircle,
   Plus,
+  FlaskConical,
+  FileCheck,
+  GraduationCap,
+  Search,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { FiliereTree } from '@/components/drive/FiliereTree';
 import { DocumentCard } from '@/components/drive/DocumentCard';
 import { EmptyState } from '@/components/common/EmptyState';
-import { AnimatedList } from '@/components/common/AnimatedList';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -26,13 +30,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useDrive } from '@/lib/hooks/useDrive';
 import { useAuthStore } from '@/lib/store/authStore';
 import { cn } from '@/lib/utils';
@@ -70,13 +67,31 @@ export default function DrivePage() {
   } = useDrive();
 
   const user = useAuthStore((s) => s.user);
-  const canReview = user?.role === 'delegue' || user?.role === 'chef_scolarite';
+
+  // Role-based access
+  const UPLOAD_ROLES = ['superadmin', 'admin', 'delegue', 'professeur'];
+  const REVIEW_ROLES = ['superadmin', 'admin', 'delegue', 'chef_scolarite'];
+  const canUpload = UPLOAD_ROLES.includes(user?.role ?? '');
+  const canReview = REVIEW_ROLES.includes(user?.role ?? '');
+
+  // Subfolder tabs
+  const SUBFOLDERS = [
+    { key: 'all',    label: 'Tout',           icon: BookOpen },
+    { key: 'cours',  label: 'Cours',          icon: BookOpen },
+    { key: 'td',     label: 'TD / TP',        icon: FlaskConical },
+    { key: 'examen', label: 'Anciens Examens', icon: FileCheck },
+    { key: 'resume', label: "Laseq's",        icon: GraduationCap },
+  ] as const;
+  type SubfolderKey = typeof SUBFOLDERS[number]['key'];
+
+  const [activeSubfolder, setActiveSubfolder] = useState<SubfolderKey>('all');
+  const [search, setSearch] = useState('');
 
   // Upload dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [docType, setDocType] = useState('');
+  const [uploadSubfolder, setUploadSubfolder] = useState('cours');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateFile = (file: File): boolean => {
@@ -105,20 +120,19 @@ export default function DrivePage() {
 
   const handleUpload = () => {
     if (!selectedFile) { toast.error('Sélectionnez un fichier.'); return; }
-    if (!docType) { toast.error('Choisissez un type de document.'); return; }
     if (!selectedModuleId) { toast.error('Sélectionnez un module dans l\'arbre.'); return; }
 
     const fd = new FormData();
     fd.append('fichier', selectedFile);
     fd.append('titre', selectedFile.name.replace(/\.[^.]+$/, ''));
-    fd.append('typeDocument', TYPE_BACKEND_MAP[docType] ?? docType);
+    fd.append('typeDocument', TYPE_BACKEND_MAP[uploadSubfolder] ?? uploadSubfolder);
     fd.append('module_pedagogique_id', selectedModuleId);
 
     uploadDoc(fd, {
       onSuccess: () => {
         toast.success('Document uploadé avec succès !');
         setSelectedFile(null);
-        setDocType('');
+        setUploadSubfolder('cours');
         setDialogOpen(false);
       },
       onError: () => toast.error('Erreur lors de l\'upload. Réessayez.'),
@@ -136,6 +150,13 @@ export default function DrivePage() {
     );
   };
 
+  const filteredDocs = documents.filter((doc) => {
+    const matchType = activeSubfolder === 'all' || doc.type === activeSubfolder;
+    const matchSearch =
+      search === '' || doc.title.toLowerCase().includes(search.toLowerCase());
+    return matchType && matchSearch;
+  });
+
   return (
     <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
       {/* Left tree panel */}
@@ -143,6 +164,17 @@ export default function DrivePage() {
         <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           Filières
         </p>
+        {canUpload && (
+          <div className="px-2 mb-3 flex items-center gap-1.5">
+            <div className="size-1.5 rounded-full bg-[#B01817]" />
+            <span className="text-[10px] text-[#B01817] font-medium uppercase tracking-wider">
+              {user?.role === 'superadmin' ? 'Super Admin'
+                : user?.role === 'admin' ? 'Admin'
+                : user?.role === 'delegue' ? 'Délégué'
+                : 'Professeur'}
+            </span>
+          </div>
+        )}
         <FiliereTree
           filieres={filieres}
           modules={modules}
@@ -156,30 +188,88 @@ export default function DrivePage() {
 
       {/* Right documents grid */}
       <main className="flex-1 overflow-y-auto p-6 relative">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-base font-semibold flex items-center gap-2">
-            <BookOpen className="size-4 text-[#B01817]" />
-            {selectedModuleId
-              ? modules.find((m) => m.id === selectedModuleId)?.name ?? 'Module'
-              : selectedFiliereId
-              ? filieres.find((f) => f.id === selectedFiliereId)?.name ?? 'Filière'
-              : 'The Drive'}
-          </h2>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-muted-foreground">
-              {documents.length} document{documents.length !== 1 ? 's' : ''}
-            </span>
-            {selectedModuleId && (
+        <div className="mb-5 space-y-3">
+          {/* Row 1: title + upload button */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-bold flex items-center gap-2">
+                <BookOpen className="size-4 text-[#B01817]" />
+                {selectedModuleId
+                  ? modules.find(m => m.id === selectedModuleId)?.name ?? 'Module'
+                  : selectedFiliereId
+                  ? filieres.find(f => f.id === selectedFiliereId)?.name ?? 'Filière'
+                  : 'The Drive'}
+              </h2>
+              {documents.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {filteredDocs.length} document{filteredDocs.length > 1 ? 's' : ''}
+                  {activeSubfolder !== 'all' && ` · ${SUBFOLDERS.find(s => s.key === activeSubfolder)?.label}`}
+                </p>
+              )}
+            </div>
+
+            {/* Upload button — authorized roles only */}
+            {selectedModuleId && canUpload && (
               <Button
                 size="sm"
                 className="bg-[#B01817] hover:bg-[#8f1211] text-white gap-1.5 h-8 text-xs"
                 onClick={() => setDialogOpen(true)}
               >
                 <Plus className="size-3.5" />
-                Uploader
+                Importer
               </Button>
             )}
           </div>
+
+          {/* Row 2: subfolder tabs — only when a module is selected */}
+          {selectedModuleId && (
+            <div className="flex items-center gap-2 flex-wrap">
+              {SUBFOLDERS.map((sf) => {
+                const count =
+                  sf.key === 'all'
+                    ? documents.length
+                    : documents.filter(d => d.type === sf.key).length;
+                const Icon = sf.icon;
+                return (
+                  <button
+                    key={sf.key}
+                    onClick={() => setActiveSubfolder(sf.key)}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-full',
+                      'text-xs font-medium border transition-all duration-150',
+                      activeSubfolder === sf.key
+                        ? 'bg-[#B01817] border-[#B01817] text-white shadow-[0_0_10px_rgba(176,24,23,0.3)]'
+                        : 'border-border/60 text-muted-foreground hover:border-border hover:text-foreground bg-transparent',
+                    )}
+                  >
+                    <Icon className="size-3" />
+                    {sf.label}
+                    <span
+                      className={cn(
+                        'text-[10px] font-mono ml-0.5',
+                        activeSubfolder === sf.key ? 'text-white/80' : 'text-muted-foreground/60',
+                      )}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+
+              {/* Search */}
+              {documents.length > 0 && (
+                <div className="relative ml-auto">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground/50" />
+                  <Input
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Rechercher…"
+                    className="pl-8 h-7 w-44 text-xs bg-muted/50 border-border/50 focus:border-[#B01817]/50"
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {!selectedFiliereId && !selectedModuleId ? (
@@ -189,9 +279,15 @@ export default function DrivePage() {
             description="Naviguez dans l'arbre à gauche pour explorer les documents."
           />
         ) : isLoadingDocuments ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="rounded-xl border border-border bg-card overflow-hidden divide-y divide-border/50">
             {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-48 rounded-xl" />
+              <div key={i} className="flex items-center gap-4 px-4 py-3.5">
+                <Skeleton className="size-10 rounded-xl shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-4 w-48 rounded" />
+                  <Skeleton className="h-3 w-32 rounded" />
+                </div>
+              </div>
             ))}
           </div>
         ) : isErrorDocuments ? (
@@ -212,14 +308,18 @@ export default function DrivePage() {
             title="Aucun document"
             description="Aucun document disponible pour cette sélection."
           />
+        ) : filteredDocs.length === 0 ? (
+          <div className="rounded-xl border border-border bg-card p-8 text-center space-y-2">
+            <Search className="size-8 text-muted-foreground/30 mx-auto" />
+            <p className="text-sm text-muted-foreground">Aucun résultat</p>
+          </div>
         ) : (
-          <AnimatedList className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {documents.map((doc) => (
-              <div key={doc.id} className="flex flex-col gap-2">
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            {filteredDocs.map((doc) => (
+              <div key={doc.id}>
                 <DocumentCard document={doc} />
-                {/* Review buttons — delegates & chef_scolarite only, for pending docs */}
                 {canReview && doc.status === 'pending' && (
-                  <div className="flex gap-2 px-1">
+                  <div className="flex gap-2 px-4 pb-3 -mt-1">
                     <Button
                       size="sm"
                       variant="outline"
@@ -244,7 +344,7 @@ export default function DrivePage() {
                 )}
               </div>
             ))}
-          </AnimatedList>
+          </div>
         )}
       </main>
 
@@ -256,6 +356,29 @@ export default function DrivePage() {
           </DialogHeader>
 
           <div className="space-y-4">
+            {/* Subfolder selector */}
+            <div className="grid grid-cols-2 gap-2">
+              {SUBFOLDERS.filter(s => s.key !== 'all').map((sf) => {
+                const Icon = sf.icon;
+                return (
+                  <button
+                    key={sf.key}
+                    onClick={() => setUploadSubfolder(sf.key)}
+                    className={cn(
+                      'flex items-center gap-2 p-3 rounded-xl border text-sm',
+                      'transition-all duration-150 text-left',
+                      uploadSubfolder === sf.key
+                        ? 'bg-[#B01817]/10 border-[#B01817]/50 text-[#B01817]'
+                        : 'border-border text-muted-foreground hover:border-border/80 hover:text-foreground',
+                    )}
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    <span className="text-xs font-medium">{sf.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Drag & drop zone */}
             <div
               className={cn(
@@ -316,18 +439,6 @@ export default function DrivePage() {
               </div>
             )}
 
-            {/* Document type */}
-            <Select value={docType} onValueChange={setDocType} disabled={isUploading}>
-              <SelectTrigger>
-                <SelectValue placeholder="Type de document…" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cours">Cours</SelectItem>
-                <SelectItem value="td">TD / TP</SelectItem>
-                <SelectItem value="examen">Examen</SelectItem>
-                <SelectItem value="resume">Résumé</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           <DialogFooter>
@@ -340,7 +451,7 @@ export default function DrivePage() {
             </Button>
             <Button
               onClick={handleUpload}
-              disabled={isUploading || !selectedFile || !docType}
+              disabled={isUploading || !selectedFile}
               className="bg-[#B01817] hover:bg-[#8f1211] text-white gap-2"
             >
               {isUploading ? (

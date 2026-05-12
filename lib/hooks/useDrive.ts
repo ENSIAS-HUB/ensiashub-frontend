@@ -15,6 +15,10 @@ function normalizeFiliere(f: any): Filiere {
   };
 }
 
+function isValidFiliere(f: any): boolean {
+  return !!(f.nom && String(f.nom).trim() !== '');
+}
+
 function normalizeModule(m: any): Module {
   const raw = String(m.semestre ?? '');
   const semNum = raw ? parseInt(raw.replace('S', '')) : 0;
@@ -47,8 +51,10 @@ function normalizeDocument(d: any): Document {
     ...d,
     title:   d.titre ?? d.nom ?? '',
     type,
-    file_url: d.urlStockage ?? '',
-    file_size: 0,
+    file_url:    d.urlStockage ?? d.preview_url ?? d.download_url ?? '',
+    preview_url: d.preview_url ?? d.urlStockage ?? '',
+    download_url: d.download_url ?? d.urlStockage ?? '',
+    file_size: d.taille ?? 0,
     status: statusMap[d.statutValidation] ?? 'pending',
     uploader: {
       id:         user.id ?? '',
@@ -111,7 +117,7 @@ export function useDrive() {
   // So: response.data = {success, data: paginator}
   //     response.data.data = paginator
   //     response.data.data.data = the actual array
-  const rawFilieres:  any[] = (filieresQuery.data  as any)?.data?.data?.data ?? [];
+  const rawFilieres:  any[] = ((filieresQuery.data  as any)?.data?.data?.data ?? []).filter(isValidFiliere);
   const rawModules:   any[] = (modulesQuery.data   as any)?.data?.data?.data ?? [];
   const rawDocuments: any[] = (documentsQuery.data as any)?.data?.data?.data ?? [];
 
