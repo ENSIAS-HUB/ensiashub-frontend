@@ -2,9 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  experimental: {
-    turbopackFileSystemCacheForDev: true
-  }
+  images: {
+    unoptimized: true,
+  },
+  turbopack: {},
+  transpilePackages: ["mapbox-gl"],
 };
 
 export default nextConfig;

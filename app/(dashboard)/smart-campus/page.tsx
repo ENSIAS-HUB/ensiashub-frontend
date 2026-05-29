@@ -1,21 +1,36 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Radio, RefreshCw, Store, WashingMachine, WifiOff, AlertCircle } from 'lucide-react';
-import { DeviceStatusCard } from '@/components/iot/DeviceStatusCard';
-import { LaundryMachineGrid } from '@/components/iot/LaundryMachineGrid';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { useIoT } from '@/lib/hooks/useIoT';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Radio,
+  RefreshCw,
+  Store,
+  WashingMachine,
+  WifiOff,
+  AlertCircle,
+} from "lucide-react";
+import { DeviceStatusCard } from "@/components/iot/DeviceStatusCard";
+import { LaundryMachineGrid } from "@/components/iot/LaundryMachineGrid";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { useIoT } from "@/lib/hooks/useIoT";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 const REFETCH_SECONDS = 10;
 
 export default function SmartCampusPage() {
-  const { devices, laundryMachines, hanoutDevice, isLoading, isError, refetch, lastUpdated, refetchInterval } =
-    useIoT();
+  const {
+    devices,
+    laundryMachines,
+    hanoutDevice,
+    isLoading,
+    isError,
+    refetch,
+    lastUpdated,
+    refetchInterval,
+  } = useIoT();
 
   const nonHanoutDevices = devices.filter((d) => d.id !== hanoutDevice?.id);
 
@@ -23,6 +38,7 @@ export default function SmartCampusPage() {
   const [countdown, setCountdown] = useState(REFETCH_SECONDS);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCountdown(REFETCH_SECONDS);
   }, [lastUpdated]);
 
@@ -64,8 +80,10 @@ export default function SmartCampusPage() {
 
           {/* Countdown */}
           <span className="flex items-center gap-1 text-xs text-muted-foreground tabular-nums">
-            <RefreshCw className={cn('size-3', isLoading && 'animate-spin')} />
-            {isLoading ? 'Actualisation…' : `Prochain rafraîchissement dans ${countdown}s`}
+            <RefreshCw className={cn("size-3", isLoading && "animate-spin")} />
+            {isLoading
+              ? "Actualisation…"
+              : `Prochain rafraîchissement dans ${countdown}s`}
           </span>
         </div>
       </div>
@@ -80,7 +98,12 @@ export default function SmartCampusPage() {
               Vérifiez que le backend IoT est accessible.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={refetch} className="gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refetch}
+            className="gap-2"
+          >
             <RefreshCw className="size-4" />
             Réessayer
           </Button>
@@ -101,7 +124,7 @@ export default function SmartCampusPage() {
             className="rounded-xl border border-border bg-card p-6"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             <div className="flex flex-col sm:flex-row items-center gap-6">
               {/* Big status */}
@@ -111,31 +134,39 @@ export default function SmartCampusPage() {
                     <span className="absolute inset-0 rounded-full bg-green-400/20 animate-ping-slow" />
                     <span
                       className="absolute inset-2 rounded-full bg-green-400/10 animate-ping-slow"
-                      style={{ animationDelay: '0.3s' }}
+                      style={{ animationDelay: "0.3s" }}
                     />
                   </>
                 )}
                 <div
                   className={`relative flex size-20 items-center justify-center rounded-full text-2xl font-bold ${
                     hanoutDevice.is_active
-                      ? 'bg-green-500/20 border-2 border-green-500/40'
-                      : 'bg-slate-700/50 border-2 border-slate-600'
+                      ? "bg-green-500/20 border-2 border-green-500/40"
+                      : "bg-slate-700/50 border-2 border-slate-600"
                   }`}
                 >
-                  {hanoutDevice.is_active ? '🟢' : '🔴'}
+                  {hanoutDevice.is_active ? "🟢" : "🔴"}
                 </div>
               </div>
 
               <div className="text-center sm:text-left">
-                <p className="text-xl font-bold">{hanoutDevice.is_active ? 'OUVERT' : 'FERMÉ'}</p>
-                <p className="text-sm text-muted-foreground mt-1">{hanoutDevice.name}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{hanoutDevice.location}</p>
+                <p className="text-xl font-bold">
+                  {hanoutDevice.is_active ? "OUVERT" : "FERMÉ"}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {hanoutDevice.name}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {hanoutDevice.location}
+                </p>
                 {hanoutDevice.last_event && (
                   <p className="text-xs text-muted-foreground mt-2">
-                    Dernière mise à jour :{' '}
-                    {new Date(hanoutDevice.last_event.recorded_at).toLocaleTimeString('fr-FR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
+                    Dernière mise à jour :{" "}
+                    {new Date(
+                      hanoutDevice.last_event.recorded_at,
+                    ).toLocaleTimeString("fr-FR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </p>
                 )}
@@ -181,15 +212,14 @@ export default function SmartCampusPage() {
       {/* Last refresh timestamp */}
       {!isError && (
         <p className="text-xs text-muted-foreground text-center pb-4">
-          Données en temps réel · Actualisé à{' '}
-          {lastUpdated.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
+          Données en temps réel · Actualisé à{" "}
+          {lastUpdated.toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
           })}
         </p>
       )}
     </div>
   );
 }
-

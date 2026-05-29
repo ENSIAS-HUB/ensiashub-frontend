@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Suspense, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { toast } from 'sonner';
-import { useAuthStore } from '@/lib/store/authStore';
-import type { User } from '@/lib/types';
+import { Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { useAuthStore } from "@/lib/store/authStore";
+import type { User } from "@/lib/types";
 
 function CallbackHandler() {
   const router = useRouter();
@@ -13,28 +13,52 @@ function CallbackHandler() {
   const setAuth = useAuthStore((s) => s.setAuth);
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const userRaw = searchParams.get('user');
+    const token = searchParams.get("token");
 
-    if (!token || !userRaw) {
-      toast.error('Authentification échouée. Paramètres manquants.');
-      router.replace('/login');
+    if (!token) {
+      toast.error("Authentification échouée. Token manquant.");
+      router.replace("/login");
       return;
     }
 
-    let user: User;
-    try {
-      user = JSON.parse(decodeURIComponent(userRaw)) as User;
-    } catch {
-      toast.error('Données utilisateur invalides.');
-      router.replace('/login');
-      return;
-    }
+    const hydrate = async () => {
+      try {
+        const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost/api";
+        const res = await fetch(`${base}/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+        if (!res.ok) {
+          throw new Error("Unable to fetch user");
+        }
+        const payload = await res.json();
+        // /me returns { success, data: UserResource }
+        const raw = payload?.data ?? payload;
+        const user: User = {
+          id: raw.id,
+          name: raw.name ?? `${raw.prenom ?? ""} ${raw.nom ?? ""}`.trim(),
+          email: raw.email ?? raw.emailInstitutionnel,
+          avatar: raw.avatar ?? raw.photoProfil ?? null,
+          role:
+            raw.role ??
+            (Array.isArray(raw.roles) ? raw.roles[0] : raw.roles) ??
+            "etudiant",
+          filiere: raw.filiere ?? null,
+          annee: raw.annee ?? null,
+        } as User;
 
-    setAuth(user, token);
-    localStorage.setItem('sanctum_token', token);
-    document.cookie = `token=${token}; path=/; max-age=86400; SameSite=Lax`;
-    router.replace('/feed');
+        setAuth(user, token);
+        window.history.replaceState(null, "", "/feed");
+        router.replace("/feed");
+      } catch {
+        toast.error("Impossible de récupérer le profil utilisateur.");
+        router.replace("/login");
+      }
+    };
+
+    hydrate();
   }, [searchParams, setAuth, router]);
 
   return null;
@@ -49,22 +73,37 @@ function Spinner() {
         transition={{ duration: 0.3 }}
         className="flex flex-col items-center gap-6"
       >
-        <div className="relative flex h-20 w-20 items-center justify-center">
-          <span className="absolute inset-0 rounded-full bg-[#B01817]/30 animate-ping" />
-          <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[#B01817] shadow-lg">
-            <span className="text-2xl font-black text-white">E</span>
+        <div className="flex flex-col items-center gap-2">
+          {/* Logo backflip */}
+          <div className="logo-backflip">
+            <img
+              src="/images/ensias-hub-only-logo.png"
+              alt="ENSIAS HUB"
+              className="w-24 h-24 object-contain"
+            />
+          </div>
+
+          {/* Ombre au sol */}
+          <div className="logo-shadow w-16 h-2 rounded-full bg-red-900/40 blur-sm -mt-1" />
+
+          {/* Texte */}
+          <div className="flex flex-col items-center mt-4 gap-0.5">
+            <p className="text-white font-bold text-lg tracking-widest">
+              ENSIAS HUB
+            </p>
+            <p className="loading-text text-white/40 text-sm tracking-wider">
+              Connexion en cours…
+            </p>
           </div>
         </div>
-        <div className="text-center">
-          <p className="text-lg font-semibold text-white">ENSIAS Hub</p>
-          <p className="mt-1 text-sm text-slate-400">Connexion en cours…</p>
-        </div>
+
+        {/* Barre de progression */}
         <div className="h-1 w-48 overflow-hidden rounded-full bg-slate-800">
           <motion.div
             className="h-full rounded-full bg-[#B01817]"
-            initial={{ x: '-100%' }}
-            animate={{ x: '100%' }}
-            transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }}
+            initial={{ x: "-100%" }}
+            animate={{ x: "100%" }}
+            transition={{ repeat: Infinity, duration: 1, ease: "easeInOut" }}
           />
         </div>
       </motion.div>
@@ -82,4 +121,3 @@ export default function CallbackPage() {
     </>
   );
 }
-

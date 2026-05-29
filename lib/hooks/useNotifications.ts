@@ -1,11 +1,15 @@
-'use client';
+"use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getPendingReviews } from '@/lib/api/drive';
-import { getGroupRequests } from '@/lib/api/groups';
-import { useAuthStore } from '@/lib/store/authStore';
-import { useNotificationStore, type AppNotification } from '@/lib/store/notificationStore';
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getPendingReviews } from "@/lib/api/drive";
+import { getGroupRequests } from "@/lib/api/groups";
+import { useAuthStore } from "@/lib/store/authStore";
+import {
+  useNotificationStore,
+  type AppNotification,
+} from "@/lib/store/notificationStore";
 
 const POLL_MS = 30_000;
 
@@ -18,13 +22,13 @@ export function useNotifications() {
   const addNotifications = useNotificationStore((s) => s.addNotifications);
 
   const isModerator =
-    user?.role === 'delegue' ||
-    user?.role === 'chef_scolarite' ||
-    user?.role === 'president_club';
+    user?.role === "delegue" ||
+    user?.role === "chef_scolarite" ||
+    user?.role === "president_club";
 
   // ── Pending document reviews (moderators only) ──────────────────────────────
   const { data: reviewsData } = useQuery({
-    queryKey: ['notif-pending-reviews'],
+    queryKey: ["notif-pending-reviews"],
     queryFn: getPendingReviews,
     enabled: isModerator,
     refetchInterval: POLL_MS,
@@ -32,14 +36,21 @@ export function useNotifications() {
   });
 
   useEffect(() => {
-    const items = reviewsData?.data?.data ?? [];
+    const raw = reviewsData?.data?.data;
+    // Laravel paginator wraps the array in another .data; handle both shapes
+    const items: { id: string; title?: string; created_at?: string }[] =
+      Array.isArray(raw)
+        ? raw
+        : Array.isArray((raw as any)?.data)
+          ? (raw as any).data
+          : [];
     if (items.length === 0) return;
     const notifs: AppNotification[] = items.map((doc) => ({
-      id:         `review-${doc.id}`,
-      title:      'Document à valider',
-      message:    `"${doc.title ?? 'Document'}" attend votre validation.`,
-      href:       '/drive',
-      read:       false,
+      id: `review-${doc.id}`,
+      title: "Document à valider",
+      message: `"${doc.title ?? "Document"}" attend votre validation.`,
+      href: "/drive",
+      read: false,
       created_at: doc.created_at ?? new Date().toISOString(),
     }));
     addNotifications(notifs);
@@ -49,12 +60,12 @@ export function useNotifications() {
   // We don't know the group id here without extra fetch, so we use a generic notif
   // when the adhesions endpoint returns pending items.
   const { data: adhesionsData } = useQuery({
-    queryKey: ['notif-pending-adhesions'],
+    queryKey: ["notif-pending-adhesions"],
     queryFn: () =>
-      import('@/lib/api/client').then(({ default: api }) =>
-        api.get<{ data: { id: string; created_at: string }[] }>('/adhesions', {
-          params: { status: 'pending' },
-        })
+      import("@/lib/api/client").then(({ default: api }) =>
+        api.get<{ data: { id: string; created_at: string }[] }>("/adhesions", {
+          params: { status: "pending" },
+        }),
       ),
     enabled: isModerator,
     refetchInterval: POLL_MS,
@@ -62,14 +73,19 @@ export function useNotifications() {
   });
 
   useEffect(() => {
-    const items = adhesionsData?.data?.data ?? [];
+    const raw = adhesionsData?.data?.data;
+    const items: { id: string; created_at?: string }[] = Array.isArray(raw)
+      ? raw
+      : Array.isArray((raw as any)?.data)
+        ? (raw as any).data
+        : [];
     if (items.length === 0) return;
     const notifs: AppNotification[] = items.map((a) => ({
-      id:         `adhesion-${a.id}`,
-      title:      'Demande d\'adhésion',
-      message:    'Un étudiant demande à rejoindre votre groupe.',
-      href:       '/groups',
-      read:       false,
+      id: `adhesion-${a.id}`,
+      title: "Demande d'adhésion",
+      message: "Un étudiant demande à rejoindre votre groupe.",
+      href: "/groups",
+      read: false,
       created_at: a.created_at ?? new Date().toISOString(),
     }));
     addNotifications(notifs);

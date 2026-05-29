@@ -32,11 +32,11 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: 'ENSIAS Hub',
-  description: 'Ensias un jour, Ensias pour toujours',
+  title: "ENSIAS Hub",
+  description: "Ensiaste un jour, Ensiaste pour toujours",
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
   },
 };
 
@@ -59,13 +59,11 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="dark"
           enableSystem={false}
-          disableTransitionOnChange
         >
           <QueryProvider>
             {children}
             <Toaster
               position="bottom-right"
-              theme="dark"
               richColors
               toastOptions={{
                 style: {

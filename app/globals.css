@@ -182,6 +182,82 @@
 .animate-spin-slow  { animation: spin-slow 3s linear infinite; }
 .animate-heart-bounce { animation: heart-bounce 0.4s ease-in-out; }
 
+/* ========== BACKFLIP ANIMATION ========== */
+
+@keyframes backflip {
+  0%   {
+    transform: translateY(0px) rotate(0deg) scale(1);
+    animation-timing-function: ease-out;
+  }
+  15%  {
+    transform: translateY(-80px) rotate(120deg) scale(1.1);
+    animation-timing-function: linear;
+  }
+  30%  {
+    transform: translateY(-120px) rotate(360deg) scale(1.15);
+    animation-timing-function: linear;
+  }
+  45%  {
+    transform: translateY(-80px) rotate(600deg) scale(1.1);
+    animation-timing-function: linear;
+  }
+  60%  {
+    transform: translateY(-30px) rotate(900deg) scale(1.05);
+    animation-timing-function: ease-in;
+  }
+  70%  {
+    transform: translateY(0px) rotate(1080deg) scale(0.92);
+    animation-timing-function: ease-out;
+  }
+  78%  {
+    transform: translateY(-18px) rotate(1080deg) scale(1.03);
+    animation-timing-function: ease-in;
+  }
+  85%  {
+    transform: translateY(0px) rotate(1080deg) scale(0.97);
+    animation-timing-function: ease-out;
+  }
+  90%  {
+    transform: translateY(-6px) rotate(1080deg) scale(1.01);
+  }
+  95%  {
+    transform: translateY(0px) rotate(1080deg) scale(1);
+  }
+  100% {
+    transform: translateY(0px) rotate(1080deg) scale(1);
+  }
+}
+
+@keyframes shadow-pulse {
+  0%, 70%, 100% {
+    transform: scaleX(1);
+    opacity: 0.4;
+  }
+  30% {
+    transform: scaleX(0.3);
+    opacity: 0.1;
+  }
+}
+
+@keyframes text-fade-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1;   }
+}
+
+.logo-backflip {
+  animation: backflip 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-origin: center bottom;
+}
+
+.logo-shadow {
+  animation: shadow-pulse 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.loading-text {
+  animation: text-fade-pulse 2.2s ease-in-out infinite;
+}
+
 /* Railway-grade surface utility classes */
 .surface-1 {
   background: var(--card);
@@ -211,10 +287,10 @@
 }
 
 /* Scrollbar styling */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #B01817; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.15); }
 
 /* Skip to content link for accessibility */
 .skip-to-content {

@@ -1,0 +1,844 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "id": "path-centre-nord", "name": "Allee centre vers nord" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8668776, 33.9849011],
+          [-6.8670204, 33.9847457],
+          [-6.8670834, 33.9846761],
+          [-6.8671501, 33.9846034],
+          [-6.8672837, 33.9844784],
+          [-6.8673371, 33.984431],
+          [-6.8674191, 33.984327]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-amphi3-acces", "name": "Acces Amphi 3" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8668776, 33.9849011],
+          [-6.8669979, 33.9849937]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-amphi3-sud", "name": "Allee sud Amphi 3" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8668776, 33.9849011],
+          [-6.866942, 33.9850077],
+          [-6.8668525, 33.9849505],
+          [-6.8668375, 33.9849397]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-amphi4-acces", "name": "Acces Amphi 4" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8668776, 33.9849011],
+          [-6.8667426, 33.9848794],
+          [-6.8668375, 33.9849397]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-salle-td1-acces", "name": "Acces Salle TD 1" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8668375, 33.9849397],
+          [-6.866942, 33.9850077]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-salle-td2-acces", "name": "Acces Salle TD 2" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8668375, 33.9849397],
+          [-6.8667328, 33.9849021]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-agora-nord", "name": "Allee nord Agora" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.866897, 33.9848775],
+          [-6.866974, 33.9849381]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-amphi1-acces", "name": "Acces Amphi 1" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670039, 33.9847641],
+          [-6.8670809, 33.9848286]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-amphi2-acces", "name": "Acces Amphi 2" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670039, 33.9847641],
+          [-6.866896, 33.9847097]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bate-acces", "name": "Acces Batiment E" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8667302, 33.9845498],
+          [-6.8664181, 33.9848625]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-agora-ouest", "name": "Allee ouest Agora" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.866897, 33.9848775],
+          [-6.8668093, 33.984841]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-centre-est", "name": "Allee centre vers est" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670367, 33.9847278],
+          [-6.8666169, 33.9844817]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-foyer-acces", "name": "Acces Foyer Buvette" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8666017, 33.9846769],
+          [-6.8664332, 33.9845645]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bate-interieur-1", "name": "Interieur Batiment E 1" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8665133, 33.9847672],
+          [-6.8663442, 33.9846513]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bate-interieur-2", "name": "Interieur Batiment E 2" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8665598, 33.9847225],
+          [-6.8663895, 33.9846097]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-salle-tp-acces", "name": "Acces Salle TP" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670367, 33.9847278],
+          [-6.8671539, 33.9848156],
+          [-6.8673444, 33.9849203]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-salle-tp-est", "name": "Salle TP est" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670834, 33.9846761],
+          [-6.8671348, 33.9847101]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-salle-tp-ouest", "name": "Salle TP ouest" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670834, 33.9846761],
+          [-6.8670397, 33.9846479]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-salle-tp-nord", "name": "Allee nord Salle TP" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8671501, 33.9846034],
+          [-6.8672901, 33.9846781]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bureau-prof-acces", "name": "Acces Bureaux Professeurs" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8673371, 33.984431],
+          [-6.8674783, 33.9845123]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-salle-tp-sud", "name": "Allee sud Salle TP" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8674783, 33.9845123],
+          [-6.8674141, 33.9845867]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bureau-prof-ouest", "name": "Bureaux Prof ouest" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8674141, 33.9845867],
+          [-6.8672646, 33.9844959]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bureau-prof-sud", "name": "Allee sud Bureaux Prof" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8673517, 33.9844113],
+          [-6.8671655, 33.984305]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bureau-prof-nord", "name": "Allee nord Bureaux Prof" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.867124, 33.9843629],
+          [-6.8672837, 33.9844784]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bureau-prof-connexion", "name": "Connexion Bureaux Prof" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8671655, 33.984305],
+          [-6.867124, 33.9843629]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-principale-nord-sud", "name": "Allee principale nord-sud" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8667302, 33.9845498],
+          [-6.8675544, 33.9836091]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-sport-nord", "name": "Allee nord terrains sport" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8669286, 33.98432],
+          [-6.8667395, 33.9842146]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-sport-centre", "name": "Allee centre terrains sport" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8669623, 33.9842884],
+          [-6.8667735, 33.9841733]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-football-acces", "name": "Acces Terrain Football" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670482, 33.9841909],
+          [-6.8668751, 33.9840855]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-sport-connexion-1", "name": "Connexion terrains 1" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8669448, 33.9841262],
+          [-6.8669388, 33.9841337]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-sport-ouest", "name": "Allee ouest terrains sport" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670596, 33.9841741],
+          [-6.866663, 33.9839294]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-gazon-acces", "name": "Acces Terrain Gazon" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8673488, 33.983846],
+          [-6.8670003, 33.9836375]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-volley-acces", "name": "Acces Terrain Volley" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670003, 33.9836375],
+          [-6.867186, 33.9835534]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-gazon-centre", "name": "Centre Terrain Gazon" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670003, 33.9836375],
+          [-6.8670021, 33.9838215]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-basket-acces", "name": "Acces Terrain Basket" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670003, 33.9836375],
+          [-6.8668514, 33.9839281]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bat-sud-acces", "name": "Allee sud batiments" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8675544, 33.9836091],
+          [-6.8671654, 33.9833481]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-batb-acces", "name": "Acces Batiment B" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.867413, 33.9835088],
+          [-6.8676288, 33.9832595]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-bata-acces", "name": "Acces Batiment A" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8671654, 33.9833481],
+          [-6.867472, 33.9830198]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-entree-principale", "name": "Entree principale campus" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8671654, 33.9833481],
+          [-6.8660377, 33.9845236]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-epicerie-acces", "name": "Acces Epicerie" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8676288, 33.9832595],
+          [-6.8675943, 33.9832239],
+          [-6.8676746, 33.983112],
+          [-6.8676916, 33.9831221]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-batc-acces", "name": "Acces Batiment C" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8676091, 33.9832048],
+          [-6.8674097, 33.9830864]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-securite-acces", "name": "Acces Securite" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.867472, 33.9830198],
+          [-6.867608, 33.9831011],
+          [-6.8675608, 33.9831615],
+          [-6.8676091, 33.9832048]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-securite-nord", "name": "Securite nord" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.867608, 33.9831011],
+          [-6.8676476, 33.9830493],
+          [-6.8676962, 33.9830837],
+          [-6.8676746, 33.983112]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-securite-est", "name": "Securite est" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8676962, 33.9830837],
+          [-6.8677325, 33.9830347],
+          [-6.8677576, 33.9830497]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-admin-acces", "name": "Acces Administration" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8674191, 33.984327],
+          [-6.8670702, 33.9841607]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-admin-nord", "name": "Allee nord Administration" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8674191, 33.984327],
+          [-6.8674866, 33.9842554],
+          [-6.8675234, 33.984218]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-admin-principal", "name": "Allee principale Administration" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8675234, 33.984218],
+          [-6.8673898, 33.9841278],
+          [-6.8675042, 33.9840056],
+          [-6.867397, 33.9839328],
+          [-6.8674465, 33.983882],
+          [-6.8673488, 33.983846]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-admin-ouest", "name": "Allee ouest Administration" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.867397, 33.9839328],
+          [-6.867239, 33.9841046],
+          [-6.867163, 33.9840603]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-admin-connexion", "name": "Connexion Administration" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8673898, 33.9841278],
+          [-6.8673477, 33.9841746],
+          [-6.867239, 33.9841046]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-grandamphi-acces", "name": "Acces Grand Amphi" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8675544, 33.9836091],
+          [-6.8676695, 33.9836519],
+          [-6.8678819, 33.9833971],
+          [-6.8676288, 33.9832595]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-scolarite-acces", "name": "Acces Service Scolarite" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8678819, 33.9833971],
+          [-6.868012, 33.9832674],
+          [-6.8681789, 33.9833561],
+          [-6.8683287, 33.9832156],
+          [-6.8688836, 33.9835697]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-scolarite-nord", "name": "Service Scolarite nord" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8684297, 33.9832865],
+          [-6.8683423, 33.983372]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-admin-parking", "name": "Parking Administration" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8674465, 33.983882],
+          [-6.8677822, 33.9840275],
+          [-6.8680915, 33.9842307]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-grandamphi-nord", "name": "Grand Amphi nord" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8677822, 33.9840275],
+          [-6.867966, 33.9838546]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-anc-scol-acces", "name": "Acces Ancienne Scolarite" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8680432, 33.9839226],
+          [-6.8681551, 33.9837924],
+          [-6.8681263, 33.983778]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-anc-scol-connexion", "name": "Connexion Ancienne Scolarite" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8681551, 33.9837924],
+          [-6.8681809, 33.9838065]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-grandamphi-ouest", "name": "Grand Amphi vers ouest" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8676695, 33.9836519],
+          [-6.8679162, 33.9838253]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-anc-scol-nord", "name": "Ancienne Scolarite nord" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8679162, 33.9838253],
+          [-6.8682637, 33.9840185],
+          [-6.8683922, 33.9838805],
+          [-6.8684092, 33.9838974]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-securite3-acces", "name": "Acces Securite 3" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.867432, 33.9840857],
+          [-6.8682696, 33.9846496],
+          [-6.8684977, 33.9843421],
+          [-6.8686805, 33.9844621]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-anc-scol-principale", "name": "Allee principale Ancienne Scolarite" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8681551, 33.9837924],
+          [-6.8685466, 33.9833583]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-admin-parking-acces", "name": "Allee parking vers admin" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8680432, 33.9839226],
+          [-6.8678554, 33.98414]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-grandamphi-connexion", "name": "Grand Amphi connexion" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8679735, 33.9840085],
+          [-6.8679155, 33.9839654],
+          [-6.8678532, 33.9839249]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-securite2-acces", "name": "Acces Securite 2" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8684977, 33.9843421],
+          [-6.8679735, 33.9840085]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-parking-admin-nord", "name": "Parking Administration nord" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8684558, 33.9844049],
+          [-6.8683603, 33.9843378],
+          [-6.868204, 33.9844944],
+          [-6.8680965, 33.9844157],
+          [-6.8681911, 33.9842975],
+          [-6.8680915, 33.9842307]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-securite2-principale", "name": "Securite 2 principale" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.868302, 33.9839867],
+          [-6.868412, 33.9840525],
+          [-6.8688836, 33.9835697]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-sud-vers-terrain", "name": "Sud vers Terrains" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8671654, 33.9833481],
+          [-6.8670003, 33.9836375]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-terrain-vers-centre", "name": "Terrains vers Centre" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670021, 33.9838215],
+          [-6.8670596, 33.9841741],
+          [-6.8670702, 33.9841607]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-sport-vers-admin", "name": "Sport vers Admin" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670702, 33.9841607],
+          [-6.8669623, 33.9842884],
+          [-6.8669286, 33.98432],
+          [-6.8674191, 33.984327]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-centre-vers-est-connexion", "name": "Centre vers zone Est" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670367, 33.9847278],
+          [-6.8668776, 33.9849011]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-est-vers-batd", "name": "Allee vers Batiment D" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8666169, 33.9844817],
+          [-6.8665133, 33.9847672],
+          [-6.8664332, 33.9845645]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-foyer-vers-bate", "name": "Foyer vers Batiment E" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8664332, 33.9845645],
+          [-6.8663895, 33.9846097],
+          [-6.8663442, 33.9846513],
+          [-6.8664181, 33.9848625]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-centre-est-connexion", "name": "Connexion centre-est au reseau" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8667302, 33.9845498],
+          [-6.8666169, 33.9844817],
+          [-6.8666017, 33.9846769]
+        ]
+      }
+    }
+  ]
+}

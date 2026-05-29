@@ -1,0 +1,180 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "campus-boundary",
+        "name": "Campus ENSIAS",
+        "type": "campus"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.8545, 33.9725],
+            [-6.851, 33.9725],
+            [-6.851, 33.9705],
+            [-6.8545, 33.9705],
+            [-6.8545, 33.9725]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "campus-entrance",
+        "name": "Entrée principale ENSIAS",
+        "type": "entrance"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-6.8527, 33.9705]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "administration",
+        "name": "Bâtiment Administration",
+        "type": "building",
+        "hasIndoorMap": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.8532, 33.9718],
+            [-6.8522, 33.9718],
+            [-6.8522, 33.9714],
+            [-6.8532, 33.9714],
+            [-6.8532, 33.9718]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "amphi-a",
+        "name": "Amphithéâtre A",
+        "type": "building",
+        "hasIndoorMap": false
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.854, 33.9722],
+            [-6.8534, 33.9722],
+            [-6.8534, 33.9718],
+            [-6.854, 33.9718],
+            [-6.854, 33.9722]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "amphi-b",
+        "name": "Amphithéâtre B",
+        "type": "building",
+        "hasIndoorMap": false
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.8533, 33.9722],
+            [-6.8527, 33.9722],
+            [-6.8527, 33.9718],
+            [-6.8533, 33.9718],
+            [-6.8533, 33.9722]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "labo-informatique",
+        "name": "Laboratoire Informatique",
+        "type": "building",
+        "hasIndoorMap": false
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.8526, 33.9722],
+            [-6.852, 33.9722],
+            [-6.852, 33.9718],
+            [-6.8526, 33.9718],
+            [-6.8526, 33.9722]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cafeteria",
+        "name": "Cafétéria",
+        "type": "building",
+        "hasIndoorMap": false
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.8515, 33.972],
+            [-6.8511, 33.972],
+            [-6.8511, 33.9717],
+            [-6.8515, 33.9717],
+            [-6.8515, 33.972]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-sud-vers-centre", "name": "Sud vers Centre" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8671654, 33.9833481],
+          [-6.8671501, 33.9836000],
+          [-6.8671501, 33.9838000],
+          [-6.8670596, 33.9841741]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-centre-vers-parking", "name": "Centre vers Parking Public" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8670596, 33.9841741],
+          [-6.8671931, 33.9842500],
+          [-6.8673177, 33.9843179]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "id": "path-centre-vers-amphi", "name": "Centre vers Amphi 3" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-6.8673177, 33.9843179],
+          [-6.8672837, 33.9844784],
+          [-6.8670834, 33.9846761],
+          [-6.8668776, 33.9849011]
+        ]
+      }
+    }
+  ]
+}

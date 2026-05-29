@@ -1,66 +1,107 @@
-﻿'use client';
+﻿"use client";
 
-import { useState } from 'react';
-import type { ElementType } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from "react";
+import type { ElementType } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  UtensilsCrossed, ClipboardList, ShoppingCart, Plus, Minus, Trash2,
-  RefreshCw, Clock, ChefHat, PackageCheck, CheckCircle2, XCircle,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { getMeals, createOrder, getMyOrders, cancelOrder } from '@/lib/api/eats';
-import type { EatsMeal, EatsOrder } from '@/lib/api/eats';
-import { useEatsStore } from '@/lib/store/eatsStore';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
+  UtensilsCrossed,
+  ClipboardList,
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  RefreshCw,
+  Clock,
+  ChefHat,
+  PackageCheck,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  getMeals,
+  createOrder,
+  getMyOrders,
+  cancelOrder,
+} from "@/lib/api/eats";
+import type { EatsMeal, EatsOrder } from "@/lib/api/eats";
+import { useEatsStore } from "@/lib/store/eatsStore";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { hasFoodImage } from "@/lib/foodImageMap";
+import { FoodItemImage } from "@/components/eats/FoodItemImage";
 
-type Tab = 'menu' | 'orders';
-type OrderStatus = EatsOrder['status'];
+type Tab = "menu" | "orders";
+type OrderStatus = EatsOrder["status"];
 
 // ── Status config ─────────────────────────────────────────────────────────────
-const STATUS_CONFIG: Record<OrderStatus, { label: string; badgeClass: string; icon: ElementType }> = {
-  en_attente:     { label: 'En attente',     badgeClass: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Clock },
-  en_preparation: { label: 'En préparation', badgeClass: 'bg-blue-500/20 text-blue-400 border-blue-500/30',       icon: ChefHat },
-  pret:           { label: 'Prêt',           badgeClass: 'bg-green-500/20 text-green-400 border-green-500/30',    icon: PackageCheck },
-  livre:          { label: 'Livré',          badgeClass: 'bg-slate-500/20 text-slate-400 border-slate-500/30',    icon: CheckCircle2 },
-  annule:         { label: 'Annulé',         badgeClass: 'bg-red-500/20 text-red-400 border-red-500/30',          icon: XCircle },
+const STATUS_CONFIG: Record<
+  OrderStatus,
+  { label: string; badgeClass: string; icon: ElementType }
+> = {
+  en_attente: {
+    label: "En attente",
+    badgeClass: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+    icon: Clock,
+  },
+  en_preparation: {
+    label: "En préparation",
+    badgeClass: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    icon: ChefHat,
+  },
+  pret: {
+    label: "Prêt",
+    badgeClass: "bg-green-500/20 text-green-400 border-green-500/30",
+    icon: PackageCheck,
+  },
+  livre: {
+    label: "Livré",
+    badgeClass: "bg-slate-500/20 text-slate-400 border-slate-500/30",
+    icon: CheckCircle2,
+  },
+  annule: {
+    label: "Annulé",
+    badgeClass: "bg-red-500/20 text-red-400 border-red-500/30",
+    icon: XCircle,
+  },
 };
 
 // ── MenuItemRow ───────────────────────────────────────────────────────────────
-function MenuItemRow({ meal, onAdd }: { meal: EatsMeal; onAdd: (meal: EatsMeal) => void }) {
-  const qty = useEatsStore(s => s.cart.find(c => c.mealId === meal.id)?.quantity ?? 0);
+function MenuItemRow({
+  meal,
+  onAdd,
+}: {
+  meal: EatsMeal;
+  onAdd: (meal: EatsMeal) => void;
+}) {
+  const qty = useEatsStore(
+    (s) => s.cart.find((c) => c.mealId === meal.id)?.quantity ?? 0,
+  );
 
   return (
     <motion.div
       className={cn(
-        'group flex items-center gap-4 py-3 px-4',
-        'border-b border-border/50 last:border-0',
-        'transition-colors duration-150',
-        meal.available ? 'hover:bg-white/[0.02]' : 'opacity-50',
+        "group flex items-center gap-4 py-3 px-4",
+        "border-b border-border/50 last:border-0",
+        "transition-colors duration-150",
+        meal.available ? "hover:bg-white/[0.02]" : "opacity-50",
       )}
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       {/* Thumbnail */}
-      <div className="relative shrink-0 size-20 rounded-xl overflow-hidden bg-muted">
-        {meal.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={meal.image_url}
-            alt={meal.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <UtensilsCrossed className="size-5 text-muted-foreground/25" />
-          </div>
-        )}
+      <div className="relative shrink-0">
+        <FoodItemImage
+          dishName={meal.name}
+          fallbackUrl={meal.image_url}
+          size={80}
+        />
         {qty > 0 && (
           <div className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-[#B01817] text-white text-[10px] font-bold flex items-center justify-center shadow-[0_0_8px_rgba(176,24,23,0.6)] z-10">
             {qty}
@@ -72,10 +113,12 @@ function MenuItemRow({ meal, onAdd }: { meal: EatsMeal; onAdd: (meal: EatsMeal) 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className={cn(
-              'text-sm font-semibold leading-tight',
-              !meal.available && 'line-through text-muted-foreground',
-            )}>
+            <p
+              className={cn(
+                "text-sm font-semibold leading-tight",
+                !meal.available && "line-through text-muted-foreground",
+              )}
+            >
               {meal.name}
             </p>
             {meal.description && (
@@ -84,8 +127,10 @@ function MenuItemRow({ meal, onAdd }: { meal: EatsMeal; onAdd: (meal: EatsMeal) 
               </p>
             )}
             <p className="text-sm font-bold mt-1.5">
-              {meal.price != null ? meal.price.toFixed(2) : '—'}
-              <span className="text-[11px] font-normal text-muted-foreground/70 ml-1">MAD</span>
+              {meal.price != null ? meal.price.toFixed(2) : "—"}
+              <span className="text-[11px] font-normal text-muted-foreground/70 ml-1">
+                MAD
+              </span>
             </p>
           </div>
 
@@ -94,12 +139,12 @@ function MenuItemRow({ meal, onAdd }: { meal: EatsMeal; onAdd: (meal: EatsMeal) 
             disabled={!meal.available}
             onClick={() => onAdd(meal)}
             className={cn(
-              'shrink-0 flex size-7 items-center justify-center rounded-lg border transition-all duration-150',
+              "shrink-0 flex size-7 items-center justify-center rounded-lg border transition-all duration-150",
               meal.available
                 ? qty > 0
-                  ? 'bg-[#B01817]/15 border-[#B01817]/60 text-[#B01817]'
-                  : 'border-border/60 text-muted-foreground/50 hover:border-[#B01817]/50 hover:text-[#B01817] hover:bg-[#B01817]/[0.08]'
-                : 'border-border/30 text-muted-foreground/20 cursor-not-allowed',
+                  ? "bg-[#B01817]/15 border-[#B01817]/60 text-[#B01817]"
+                  : "border-border/60 text-muted-foreground/50 hover:border-[#B01817]/50 hover:text-[#B01817] hover:bg-[#B01817]/[0.08]"
+                : "border-border/30 text-muted-foreground/20 cursor-not-allowed",
             )}
           >
             <Plus className="size-3" />
@@ -119,8 +164,8 @@ function OrderRow({ order }: { order: EatsOrder }) {
   const cancelMutation = useMutation({
     mutationFn: () => cancelOrder(order.id),
     onSuccess: () => {
-      toast.success('Commande annulée.');
-      queryClient.invalidateQueries({ queryKey: ['eats-my-orders'] });
+      toast.success("Commande annulée.");
+      queryClient.invalidateQueries({ queryKey: ["eats-my-orders"] });
     },
     onError: () => toast.error("Impossible d'annuler la commande."),
   });
@@ -129,14 +174,22 @@ function OrderRow({ order }: { order: EatsOrder }) {
     <div className="rounded-xl border border-border bg-card p-4 space-y-3">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-muted-foreground">Commande #{order.id.slice(0, 8)}</p>
+          <p className="text-xs text-muted-foreground">
+            Commande #{order.id.slice(0, 8)}
+          </p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {new Date(order.created_at).toLocaleString('fr-FR', {
-              day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
+            {new Date(order.created_at).toLocaleString("fr-FR", {
+              day: "2-digit",
+              month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           </p>
         </div>
-        <Badge variant="outline" className={cn('flex items-center gap-1 text-[10px]', cfg.badgeClass)}>
+        <Badge
+          variant="outline"
+          className={cn("flex items-center gap-1 text-[10px]", cfg.badgeClass)}
+        >
           <Icon className="size-3" />
           {cfg.label}
         </Badge>
@@ -147,7 +200,7 @@ function OrderRow({ order }: { order: EatsOrder }) {
           {order.items.map((line) => (
             <div key={line.id} className="flex justify-between text-xs">
               <span className="text-muted-foreground">
-                {line.meal?.name ?? '—'} × {line.quantity}
+                {line.meal?.name ?? "—"} × {line.quantity}
               </span>
               <span>{(line.unit_price * line.quantity).toFixed(2)} MAD</span>
             </div>
@@ -160,7 +213,7 @@ function OrderRow({ order }: { order: EatsOrder }) {
       <div className="flex items-center justify-between">
         {/* FIX 7 — total NOT red */}
         <span className="text-sm font-bold">{order.total.toFixed(2)} MAD</span>
-        {order.status === 'en_attente' && (
+        {order.status === "en_attente" && (
           <Button
             size="sm"
             variant="outline"
@@ -179,19 +232,27 @@ function OrderRow({ order }: { order: EatsOrder }) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function EatsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('menu');
+  const [activeTab, setActiveTab] = useState<Tab>("menu");
 
   const queryClient = useQueryClient();
-  const { cart, addToCart, removeFromCart, updateQuantity, clearCart, total, itemCount } = useEatsStore();
+  const {
+    cart,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    total,
+    itemCount,
+  } = useEatsStore();
 
   // ── Queries ───────────────────────────────────────────────────────────────
   const { data: mealsData, isLoading: mealsLoading } = useQuery({
-    queryKey: ['eats-meals'],
+    queryKey: ["eats-meals"],
     queryFn: () => getMeals(),
   });
 
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
-    queryKey: ['eats-my-orders'],
+    queryKey: ["eats-my-orders"],
     queryFn: () => getMyOrders(),
     refetchInterval: 15_000,
   });
@@ -200,26 +261,46 @@ export default function EatsPage() {
   const menuItems: EatsMeal[] = Array.isArray(mealsData?.data?.data)
     ? mealsData.data.data
     : Array.isArray(mealsData?.data)
-    ? (mealsData.data as unknown as EatsMeal[])
-    : [];
+      ? (mealsData.data as unknown as EatsMeal[])
+      : [];
 
   const myOrders: EatsOrder[] = Array.isArray(ordersData?.data?.data)
     ? ordersData.data.data
     : Array.isArray(ordersData?.data)
-    ? (ordersData.data as unknown as EatsOrder[])
-    : [];
-
+      ? (ordersData.data as unknown as EatsOrder[])
+      : [];
 
   const cartTotal = total();
   const cartCount = itemCount();
-  const activeOrdersCount = myOrders.filter(o => o.status !== 'livre' && o.status !== 'annule').length;
+  const activeOrdersCount = myOrders.filter(
+    (o) => o.status !== "livre" && o.status !== "annule",
+  ).length;
+
+  // ── Filtrer les plats sans image ──────────────────────────────────────────
+  const visibleItems = menuItems;
+
+  // Debug : plats non reconnus (retirer après correction des clés)
+  useEffect(() => {
+    const missing = menuItems
+      .filter((item) => !hasFoodImage(item.name))
+      .map((item) => item.name);
+    if (missing.length > 0) {
+      console.log("Plats sans image:", missing);
+    }
+  }, [menuItems]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleAddToCart = (meal: EatsMeal) =>
-    addToCart({ mealId: meal.id, name: meal.name, price: meal.price, quantity: 1, image: meal.image_url });
+    addToCart({
+      mealId: meal.id,
+      name: meal.name,
+      price: meal.price,
+      quantity: 1,
+      image: meal.image_url,
+    });
 
   const handleUpdateQty = (mealId: string, delta: number) => {
-    const item = cart.find(c => c.mealId === mealId);
+    const item = cart.find((c) => c.mealId === mealId);
     if (!item) return;
     const next = item.quantity + delta;
     if (next <= 0) removeFromCart(mealId);
@@ -229,19 +310,20 @@ export default function EatsPage() {
   // ── Order mutation (unchanged) ────────────────────────────────────────────
   const orderMutation = useMutation({
     mutationFn: () =>
-      createOrder({ items: cart.map(i => ({ mealId: i.mealId, quantity: i.quantity })) }),
+      createOrder({
+        items: cart.map((i) => ({ mealId: i.mealId, quantity: i.quantity })),
+      }),
     onSuccess: () => {
       clearCart();
-      toast.success('Commande passée !');
-      queryClient.invalidateQueries({ queryKey: ['eats-my-orders'] });
-      setActiveTab('orders');
+      toast.success("Commande passée !");
+      queryClient.invalidateQueries({ queryKey: ["eats-my-orders"] });
+      setActiveTab("orders");
     },
-    onError: () => toast.error('Erreur lors de la commande.'),
+    onError: () => toast.error("Erreur lors de la commande."),
   });
 
   return (
     <div className="flex h-full overflow-hidden">
-
       {/* ── Main area ─────────────────────────────────────────────────────── */}
       <Tabs
         value={activeTab}
@@ -260,9 +342,13 @@ export default function EatsPage() {
               <div className="flex items-center gap-4 mt-1 mb-3">
                 <div className="flex items-center gap-1.5">
                   <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse" />
-                  <span className="text-xs text-emerald-400 font-medium">Ouvert</span>
+                  <span className="text-xs text-emerald-400 font-medium">
+                    Ouvert
+                  </span>
                 </div>
-                <span className="text-xs text-muted-foreground">· Ferme à 15h00</span>
+                <span className="text-xs text-muted-foreground">
+                  · Ferme à 15h00
+                </span>
               </div>
             </div>
             <TabsList className="h-8 shrink-0">
@@ -284,7 +370,10 @@ export default function EatsPage() {
         </div>
 
         {/* ── Menu tab ───────────────────────────────────────────────────── */}
-        <TabsContent value="menu" className="flex-1 overflow-y-auto px-6 pb-6 mt-0">
+        <TabsContent
+          value="menu"
+          className="flex-1 overflow-y-auto px-6 pb-6 mt-0"
+        >
           {mealsLoading ? (
             <div className="space-y-6">
               {Array.from({ length: 3 }).map((_, si) => (
@@ -303,77 +392,86 @@ export default function EatsPage() {
                 </div>
               ))}
             </div>
-          ) : menuItems.length === 0 ? (
+          ) : visibleItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
               <UtensilsCrossed className="size-10 text-muted-foreground/30" />
-              <p className="text-sm text-muted-foreground">Aucun plat disponible</p>
+              <p className="text-sm text-muted-foreground">
+                Aucun plat disponible
+              </p>
             </div>
-          ) : (() => {
-            // Build ordered category map
-            const categoryMap = new Map<string, EatsMeal[]>();
-            menuItems.forEach((item) => {
-              const cat = item.category || 'Autres';
-              if (!categoryMap.has(cat)) categoryMap.set(cat, []);
-              categoryMap.get(cat)!.push(item);
-            });
-            const categoryEntries = Array.from(categoryMap.entries());
+          ) : (
+            (() => {
+              // Build ordered category map
+              const categoryMap = new Map<string, EatsMeal[]>();
+              visibleItems.forEach((item) => {
+                const cat = item.category || "Autres";
+                if (!categoryMap.has(cat)) categoryMap.set(cat, []);
+                categoryMap.get(cat)!.push(item);
+              });
+              const categoryEntries = Array.from(categoryMap.entries());
 
-            return (
-              <div className="space-y-6">
-                {/* Category anchor nav */}
-                <div className="relative">
-                  <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
-                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]">
-                    {categoryEntries.map(([cat, items]) => (
-                      <a
-                        key={cat}
-                        href={`#cat-${cat.replace(/\s+/g, '-')}`}
-                        className="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border border-border text-muted-foreground hover:border-[#B01817]/50 hover:text-foreground transition-all duration-150 whitespace-nowrap bg-transparent"
-                      >
-                        {cat}
-                        <span className="ml-1.5 text-[10px] text-muted-foreground/60">
-                          {items.length}
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Sections */}
-                {categoryEntries.map(([cat, items]) => (
-                  <div
-                    key={cat}
-                    id={`cat-${cat.replace(/\s+/g, '-')}`}
-                    className="scroll-mt-20"
-                  >
-                    {/* Section header */}
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-sm font-bold text-foreground">{cat}</h3>
-                      <span className="text-[11px] text-muted-foreground/60 font-mono">
-                        {items.length} article{items.length > 1 ? 's' : ''}
-                      </span>
-                      <div className="flex-1 h-px bg-border/50" />
-                    </div>
-
-                    {/* Items list */}
-                    <div className="rounded-xl border border-border bg-card overflow-hidden">
-                      {items.map((meal) => (
-                        <MenuItemRow
-                          key={meal.id}
-                          meal={meal}
-                          onAdd={handleAddToCart}
-                        />
+              return (
+                <div className="space-y-6">
+                  {/* Category anchor nav */}
+                  <div className="relative">
+                    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
+                    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]">
+                      {categoryEntries.map(([cat, items]) => (
+                        <a
+                          key={cat}
+                          href={`#cat-${cat.replace(/\s+/g, "-")}`}
+                          className="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border border-border text-muted-foreground hover:border-[#B01817]/50 hover:text-foreground transition-all duration-150 whitespace-nowrap bg-transparent"
+                        >
+                          {cat}
+                          <span className="ml-1.5 text-[10px] text-muted-foreground/60">
+                            {items.length}
+                          </span>
+                        </a>
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            );
-          })()}
+
+                  {/* Sections */}
+                  {categoryEntries.map(([cat, items]) => (
+                    <div
+                      key={cat}
+                      id={`cat-${cat.replace(/\s+/g, "-")}`}
+                      className="scroll-mt-20"
+                    >
+                      {/* Section header */}
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-sm font-bold text-foreground">
+                          {cat}
+                        </h3>
+                        <span className="text-[11px] text-muted-foreground/60 font-mono">
+                          {items.length} article{items.length > 1 ? "s" : ""}
+                        </span>
+                        <div className="flex-1 h-px bg-border/50" />
+                      </div>
+
+                      {/* Items list */}
+                      <div className="rounded-xl border border-border bg-card overflow-hidden">
+                        {items.map((meal) => (
+                          <MenuItemRow
+                            key={meal.id}
+                            meal={meal}
+                            onAdd={handleAddToCart}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()
+          )}
         </TabsContent>
 
         {/* ── Orders tab ─────────────────────────────────────────────────── */}
-        <TabsContent value="orders" className="flex-1 overflow-y-auto px-6 pb-6 mt-0">
+        <TabsContent
+          value="orders"
+          className="flex-1 overflow-y-auto px-6 pb-6 mt-0"
+        >
           <p className="text-[11px] text-muted-foreground/50 font-mono mb-4">
             Actualisé toutes les 15s
           </p>
@@ -400,10 +498,9 @@ export default function EatsPage() {
       </Tabs>
 
       {/* ── FIX 4 — Cart sidebar (sticky elevated panel) ─────────────────── */}
-      {activeTab === 'menu' && (
+      {activeTab === "menu" && (
         <aside className="w-80 shrink-0 p-4 border-l border-border overflow-y-auto">
           <div className="rounded-xl border border-border bg-card overflow-hidden">
-
             {/* Cart header */}
             <div className="px-4 py-3 border-b border-border flex items-center gap-2">
               <ShoppingCart className="size-4 text-[#B01817]" />
@@ -430,7 +527,9 @@ export default function EatsPage() {
                       <ShoppingCart className="size-5 text-muted-foreground/40" />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground">Panier vide</p>
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Panier vide
+                      </p>
                       <p className="text-[11px] text-muted-foreground/60 mt-0.5">
                         Ajoutez des plats au menu
                       </p>
@@ -448,7 +547,9 @@ export default function EatsPage() {
                         exit={{ opacity: 0, x: -10 }}
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium truncate">{c.name}</p>
+                          <p className="text-xs font-medium truncate">
+                            {c.name}
+                          </p>
                           <p className="text-[11px] text-muted-foreground">
                             {(c.price * c.quantity).toFixed(2)} MAD
                           </p>
@@ -460,9 +561,11 @@ export default function EatsPage() {
                             className="size-6 rounded-md hover:bg-muted"
                             onClick={() => handleUpdateQty(c.mealId, -1)}
                           >
-                            {c.quantity === 1
-                              ? <Trash2 className="size-3 text-destructive" />
-                              : <Minus className="size-3" />}
+                            {c.quantity === 1 ? (
+                              <Trash2 className="size-3 text-destructive" />
+                            ) : (
+                              <Minus className="size-3" />
+                            )}
                           </Button>
                           <span className="text-xs font-bold w-5 text-center tabular-nums">
                             {c.quantity}
@@ -484,7 +587,9 @@ export default function EatsPage() {
                     {/* FIX 2 — subtotal NOT red */}
                     <div className="space-y-1">
                       <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>{cartCount} article{cartCount > 1 ? 's' : ''}</span>
+                        <span>
+                          {cartCount} article{cartCount > 1 ? "s" : ""}
+                        </span>
                         <span>{cartTotal.toFixed(2)} MAD</span>
                       </div>
                       <div className="flex justify-between text-sm font-bold">
@@ -509,9 +614,15 @@ export default function EatsPage() {
                   onClick={() => orderMutation.mutate()}
                 >
                   {orderMutation.isPending ? (
-                    <><RefreshCw className="size-4 animate-spin" />Envoi…</>
+                    <>
+                      <RefreshCw className="size-4 animate-spin" />
+                      Envoi…
+                    </>
                   ) : (
-                    <><ShoppingCart className="size-4" />Commander · {cartTotal.toFixed(2)} MAD</>
+                    <>
+                      <ShoppingCart className="size-4" />
+                      Commander · {cartTotal.toFixed(2)} MAD
+                    </>
                   )}
                 </Button>
               </div>
@@ -522,4 +633,3 @@ export default function EatsPage() {
     </div>
   );
 }
-
