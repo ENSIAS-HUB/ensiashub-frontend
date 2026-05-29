@@ -5,7 +5,7 @@
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { apiClient } from "@/lib/api/client";
+import apiClient from "@/lib/api/client";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
