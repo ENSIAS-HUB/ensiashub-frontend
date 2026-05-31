@@ -24,6 +24,8 @@ import {
   Sun,
   Camera,
   CheckCircle2,
+  Trash2,
+  X,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -365,8 +367,30 @@ function AccountTab({
   user: User | null;
   onLogout: () => void;
 }) {
-  const { setAuth, token } = useAuthStore();
+  const { setAuth, token, logout } = useAuthStore();
+  const router = useRouter();
   const queryClient = useQueryClient();
+
+  // ── État : modale suppression de compte ─────────────────────────────
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => apiClient.delete("/me"),
+    onSuccess: () => {
+      // Vide le store Zustand et redirige vers la landing page
+      logout();
+      router.push("/");
+    },
+    onError: () => {
+      toast.error("Une erreur est survenue. Veuillez réessayer.");
+    },
+  });
+
+  const handleDeleteAccount = () => {
+    if (deleteConfirmText !== "SUPPRIMER") return;
+    deleteAccountMutation.mutate();
+  };
 
   // ── Avatar state ──────────────────────────────────────────────────
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -842,28 +866,117 @@ function AccountTab({
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-medium text-foreground">
-              Désactiver le compte
+              Supprimer mon compte
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Votre compte sera suspendu et vos données conservées pendant 30
-              jours.
+              Vos données nominatives seront anonymisées (CNDP/RGPD). Vos
+              publications resteront sous « Utilisateur Supprimé ».
             </p>
           </div>
           <Button
             size="sm"
             variant="outline"
             className="h-8 text-xs shrink-0 gap-1.5 text-red-400 border-red-500/30 hover:bg-red-500/10 hover:text-red-300"
-            onClick={() =>
-              toast.error(
-                "Action désactivée en environnement de démonstration.",
-              )
-            }
+            onClick={() => setShowDeleteModal(true)}
           >
-            <AlertTriangle className="size-3" />
-            Désactiver
+            <Trash2 className="size-3" />
+            Supprimer
           </Button>
         </div>
       </CardSection>
+
+      {/* ── Modale de confirmation — suppression de compte ── */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-xl border border-red-500/30 bg-card p-6 shadow-2xl">
+            {/* En-tête */}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div className="flex items-start gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-red-500/15">
+                  <Trash2 className="size-5 text-red-500" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Supprimer définitivement le compte
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Cette action est irréversible. Votre profil sera anonymisé
+                    conformément au CNDP/RGPD. Vos publications resteront
+                    visibles sous le nom « Utilisateur Supprimé ».
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteConfirmText("");
+                }}
+                className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            {/* Avertissement */}
+            <div className="rounded-lg bg-red-500/5 border border-red-500/20 px-3 py-2 mb-4">
+              <p className="text-xs text-red-400">
+                ⚠️ Données supprimées : nom, prénom, email, photo de profil,
+                bio, téléphone, liens sociaux, ville.
+              </p>
+            </div>
+
+            {/* Confirmation par saisie */}
+            <div className="space-y-2 mb-4">
+              <p className="text-xs text-muted-foreground">
+                Pour confirmer, tapez{" "}
+                <span className="font-mono font-semibold text-foreground">
+                  SUPPRIMER
+                </span>{" "}
+                ci-dessous :
+              </p>
+              <input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="SUPPRIMER"
+                className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-red-500 transition-colors"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs"
+                disabled={deleteAccountMutation.isPending}
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteConfirmText("");
+                }}
+              >
+                Annuler
+              </Button>
+              <Button
+                size="sm"
+                disabled={
+                  deleteConfirmText !== "SUPPRIMER" ||
+                  deleteAccountMutation.isPending
+                }
+                onClick={handleDeleteAccount}
+                className="h-8 text-xs gap-1.5 bg-red-600 hover:bg-red-700 text-white disabled:opacity-40"
+              >
+                {deleteAccountMutation.isPending ? (
+                  <Loader2 className="size-3 animate-spin" />
+                ) : (
+                  <Trash2 className="size-3" />
+                )}
+                Supprimer définitivement
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

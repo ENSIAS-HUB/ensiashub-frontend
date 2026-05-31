@@ -382,8 +382,8 @@ export function PostCard({ post, onReact }: PostCardProps) {
     ? (post.group!.avatar_url ?? undefined)
     : post.author.avatar;
   const displayInitials = isGroupPost
-    ? post.group!.name
-        .split(" ")
+    ? post
+        .group!.name.split(" ")
         .map((n) => n[0])
         .join("")
         .slice(0, 2)
