@@ -40,6 +40,7 @@ export interface DriveDocument {
   azure_url: string | null;
   download_url: string | null;
   preview_url: string | null;
+  signed_url: string | null;
   urlStockage: string | null;
   mime_type: string | null;
   taille: number;

@@ -69,14 +69,22 @@ function DownloadButton({
   const mutation = useMutation({
     mutationFn: () =>
       apiClient
-        .get<{ url: string }>(`/drive/documents/${docId}/download`)
-        .then((r) => r.data.url ?? azureUrl),
+        .get<{
+          download_url?: string;
+          url?: string;
+        }>(`/drive/documents/${docId}/download`)
+        .then((r) => r.data.download_url ?? r.data.url ?? azureUrl),
     onSuccess: (url) => {
-      if (url) window.open(url, "_blank");
+      if (url && typeof window !== "undefined") {
+        window.location.href = url;
+      }
     },
     onError: () => {
-      if (azureUrl) window.open(azureUrl, "_blank");
-      else toast.error("Impossible de télécharger le fichier.");
+      if (azureUrl && typeof window !== "undefined") {
+        window.location.href = azureUrl;
+      } else {
+        toast.error("Impossible de télécharger le fichier.");
+      }
     },
   });
 

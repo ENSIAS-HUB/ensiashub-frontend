@@ -116,8 +116,11 @@ export const uploadDriveDocument = (
 
 export const downloadDriveDocument = (id: string) =>
   apiClient
-    .get<{ url: string }>(`/drive/documents/${id}/download`)
-    .then((r) => r.data.url);
+    .get<{
+      download_url?: string;
+      url?: string;
+    }>(`/drive/documents/${id}/download`)
+    .then((r) => r.data.download_url ?? r.data.url ?? "");
 
 export const deleteDriveDocument = (id: string) =>
   apiClient.delete(`/drive/documents/${id}`).then((r) => r.data);
@@ -163,7 +166,9 @@ export const getDriveModules2 = (filiereId: string, annee?: string) =>
   apiClient
     .get<{
       modules: import("@/lib/types/drive").ModuleDrive[];
-    }>(`/drive/filieres/${filiereId}/modules`, { params: annee ? { annee } : {} })
+    }>(`/drive/filieres/${filiereId}/modules`, {
+      params: annee ? { annee } : {},
+    })
     .then((r) => r.data.modules);
 
 export const getDriveElements = (

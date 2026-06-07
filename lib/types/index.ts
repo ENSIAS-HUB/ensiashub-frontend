@@ -186,6 +186,7 @@ export interface Document {
   file_url: string;
   preview_url: string;
   download_url: string;
+  signed_url?: string | null;
   file_size: number;
   status: ValidationStatus;
   uploader: User;
