@@ -28,7 +28,7 @@ import { SaveButton } from "@/components/social/SaveButton";
 
 // ── URL resolver (backend-relative paths → absolute) ────────────────────────
 const BACKEND_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost/api"
+  process.env.NEXT_PUBLIC_API_URL ?? "https://api.ensiashub.me/api"
 ).replace(/\/api$/, "");
 function resolveUrl(url: string): string {
   if (!url || url.startsWith("http")) return url;
@@ -337,7 +337,7 @@ function getCategoryColor(category: string) {
 export function PostCard({ post, onReact }: PostCardProps) {
   const queryClient = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);
-  const isAuthor = currentUser?.id === post.author.id;
+  const isAuthor = currentUser?.id === post.author?.id;
   const [reacted, setReacted] = useState(post.user_reacted);
   const [reactCount, setReactCount] = useState(post.reactions_count);
   const [heartBounce, setHeartBounce] = useState(false);
@@ -366,28 +366,33 @@ export function PostCard({ post, onReact }: PostCardProps) {
     }
   };
 
-  const initials = post.author.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const initials =
+    (post.author?.name ?? "")
+      .split(" ")
+      .map((n) => n[0])
+      .filter(Boolean)
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
 
   // For group posts (clubs and filière-option groups like INSEC/EITC), show
   // the group identity (name + avatar) instead of the technical author
   // (often "Système Admin" for imported/auto-posted content).
   const isGroupPost = !!post.group;
-  const displayName = isGroupPost ? post.group!.name : post.author.name;
+  const displayName = isGroupPost
+    ? (post.group?.name ?? "Groupe")
+    : (post.author?.name ?? "Utilisateur");
   const displayAvatar = isGroupPost
-    ? (post.group!.avatar_url ?? undefined)
-    : post.author.avatar;
+    ? (post.group?.avatar_url ?? undefined)
+    : post.author?.avatar;
   const displayInitials = isGroupPost
-    ? post
-        .group!.name.split(" ")
+    ? (post.group?.name ?? "")
+        .split(" ")
         .map((n) => n[0])
+        .filter(Boolean)
         .join("")
         .slice(0, 2)
-        .toUpperCase()
+        .toUpperCase() || "?"
     : initials;
   const resolvedAvatar = displayAvatar
     ? isGroupPost

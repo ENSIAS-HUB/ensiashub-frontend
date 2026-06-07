@@ -21,7 +21,7 @@ export function getStorageUrl(
     return path;
   }
   const backendBase = (
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost/api"
+    process.env.NEXT_PUBLIC_API_URL || "https://api.ensiashub.me/api"
   ).replace(/\/api$/, "");
   return `${backendBase}${path}`;
 }

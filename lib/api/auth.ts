@@ -2,7 +2,7 @@ import apiClient from "./client";
 import type { User, ApiResponse } from "@/lib/types";
 
 export const getAuthRedirect = (provider: "google" | "microsoft") =>
-  `${process.env.NEXT_PUBLIC_API_URL || "http://localhost/api"}/auth/redirect/${provider}`;
+  `${process.env.NEXT_PUBLIC_API_URL || "https://api.ensiashub.me/api"}/auth/redirect/${provider}`;
 
 export const getMe = () => apiClient.get<ApiResponse<User>>("/me");
 

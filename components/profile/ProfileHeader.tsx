@@ -50,7 +50,7 @@ export function ProfileHeader({
     <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#111827]">
       {/* ── BANNIÈRE ─────────────────────────────────────────────── */}
       <div className="relative h-52 bg-gradient-to-br from-[#1a2a4a] to-[#0f1923] group">
-        {user.cover_url && (
+        {user?.cover_url && (
           <img
             src={getStorageUrl(user.cover_url)}
             alt="Bannière"
@@ -88,10 +88,10 @@ export function ProfileHeader({
               className="w-24 h-24 rounded-full border-4 border-[#111827]
                             overflow-hidden bg-[#1e2a3a]"
             >
-              {user.avatar_url ? (
+              {user?.avatar_url ? (
                 <img
                   src={getStorageUrl(user.avatar_url)}
-                  alt={user.name}
+                  alt={user?.name ?? "Avatar"}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -100,7 +100,7 @@ export function ProfileHeader({
                                 bg-gradient-to-br from-red-700 to-red-900"
                 >
                   <span className="text-2xl font-bold text-white">
-                    {user.name.charAt(0).toUpperCase()}
+                    {(user?.name?.charAt(0) ?? "?").toUpperCase()}
                   </span>
                 </div>
               )}
@@ -157,12 +157,16 @@ export function ProfileHeader({
         {/* ── IDENTITÉ ─────────────────────────────────────────────── */}
         <div className="space-y-2">
           <div>
-            <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-            <p className="text-white/50 text-sm">@{user.username}</p>
+            <h1 className="text-2xl font-bold text-white">
+              {user?.name ?? "Utilisateur"}
+            </h1>
+            <p className="text-white/50 text-sm">
+              @{user?.username ?? "inconnu"}
+            </p>
           </div>
 
           {/* Titre académique */}
-          {user.filiere && (
+          {user?.filiere && (
             <p className="text-white/80 text-sm font-medium">
               Élève Ingénieur en {user.filiere}
               {user.specialite ? `/${user.specialite}` : ""} — ENSIAS Rabat
@@ -170,10 +174,13 @@ export function ProfileHeader({
           )}
 
           {/* Badges */}
-          <BadgeList role={user.role} contextualRoles={user.contextual_roles} />
+          <BadgeList
+            role={user?.role}
+            contextualRoles={user?.contextual_roles}
+          />
 
           {/* Bio */}
-          {user.bio && (
+          {user?.bio && (
             <p className="text-white/70 text-sm leading-relaxed max-w-2xl mt-2">
               {user.bio}
             </p>
@@ -181,12 +188,12 @@ export function ProfileHeader({
 
           {/* Infos de contact */}
           <div className="flex flex-wrap items-center gap-4 text-white/50 text-sm mt-3">
-            {user.ville && (
+            {user?.ville && (
               <span className="flex items-center gap-1">
                 <MapPin size={13} /> {user.ville}
               </span>
             )}
-            {user.linkedin_url && (
+            {user?.linkedin_url && (
               <a
                 href={user.linkedin_url}
                 target="_blank"
@@ -205,7 +212,7 @@ export function ProfileHeader({
                 LinkedIn
               </a>
             )}
-            {user.github_url && (
+            {user?.github_url && (
               <a
                 href={user.github_url}
                 target="_blank"
@@ -224,7 +231,7 @@ export function ProfileHeader({
                 GitHub
               </a>
             )}
-            {user.website_url && (
+            {user?.website_url && (
               <a
                 href={user.website_url}
                 target="_blank"
@@ -238,9 +245,9 @@ export function ProfileHeader({
 
           {/* Stats */}
           <div className="flex items-center gap-6 pt-3 border-t border-white/10 mt-3">
-            <StatItem value={user.followers_count} label="Abonnés" />
-            <StatItem value={user.following_count} label="Abonnements" />
-            <StatItem value={user.projects_count} label="Projets" />
+            <StatItem value={user?.followers_count ?? 0} label="Abonnés" />
+            <StatItem value={user?.following_count ?? 0} label="Abonnements" />
+            <StatItem value={user?.projects_count ?? 0} label="Projets" />
           </div>
         </div>
       </div>
