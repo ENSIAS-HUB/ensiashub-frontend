@@ -83,7 +83,7 @@ export default function HeroSection() {
                          rounded-lg font-semibold text-white
                          transition-colors flex items-center gap-2"
             >
-              Login →
+              Se connecter →
             </Link>
             <a
               href="#features"

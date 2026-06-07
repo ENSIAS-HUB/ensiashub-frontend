@@ -53,7 +53,7 @@ function GroupCard({
   onJoin: (group: Group) => void;
 }) {
   const cat = CATEGORY_CONFIG[group.category] ?? CATEGORY_CONFIG.general;
-  const initials = group.name.slice(0, 2).toUpperCase();
+  const initials = (group.name ?? "?").slice(0, 2).toUpperCase();
 
   return (
     <motion.div

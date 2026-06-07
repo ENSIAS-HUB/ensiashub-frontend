@@ -71,7 +71,7 @@ function GroupHeader({
   joinLoading: boolean;
 }) {
   const cat = CAT_CONFIG[group.category] ?? CAT_CONFIG.general;
-  const initials = group.name.slice(0, 2).toUpperCase();
+  const initials = (group.name ?? "?").slice(0, 2).toUpperCase();
   const modInitials = group.moderator?.name?.slice(0, 2).toUpperCase() ?? "??";
 
   return (

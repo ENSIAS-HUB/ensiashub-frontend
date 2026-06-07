@@ -3,7 +3,13 @@ import apiClient from "@/lib/api/client";
 
 export interface DriveAccessFull {
   full_access: true;
-  filieres: { id: string; nom: string; slug: string; badge: string | null; is_tronc_commun: boolean }[];
+  filieres: {
+    id: string;
+    nom: string;
+    slug: string;
+    badge: string | null;
+    is_tronc_commun: boolean;
+  }[];
 }
 
 export interface DriveAccessStudent {

@@ -133,7 +133,7 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
           asChild
         >
           <a
-            href={doc.preview_url || doc.file_url}
+            href={doc.signed_url || doc.preview_url || doc.file_url}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -147,7 +147,7 @@ export function DocumentCard({ document: doc }: DocumentCardProps) {
             hover:text-[#B01817] hover:bg-[#B01817]/10"
           asChild
         >
-          <a href={doc.download_url || doc.file_url} download>
+          <a href={doc.signed_url || doc.download_url || doc.file_url} download>
             <Download className="size-3.5" />
           </a>
         </Button>

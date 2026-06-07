@@ -76,7 +76,7 @@ export function useNotificationStream() {
     const baseUrl = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/$/, "");
     const token =
       typeof window !== "undefined"
-        ? localStorage.getItem("auth_token") ?? ""
+        ? (localStorage.getItem("auth_token") ?? "")
         : "";
 
     if (!token || !baseUrl) return;
@@ -88,7 +88,9 @@ export function useNotificationStream() {
     es.addEventListener("unread", (e: MessageEvent) => {
       try {
         const payload = JSON.parse(e.data) as { count: number };
-        qc.setQueryData(["server-notifications-count"], { count: payload.count });
+        qc.setQueryData(["server-notifications-count"], {
+          count: payload.count,
+        });
       } catch {
         // ignore parse errors
       }

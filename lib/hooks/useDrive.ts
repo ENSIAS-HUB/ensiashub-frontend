@@ -81,9 +81,12 @@ function normalizeDocument(d: any): Document {
     ...d,
     title: d.titre ?? d.nom ?? "",
     type,
-    file_url: d.urlStockage ?? d.preview_url ?? d.download_url ?? "",
-    preview_url: d.preview_url ?? d.urlStockage ?? "",
-    download_url: d.download_url ?? d.urlStockage ?? "",
+    // Privilégier signed_url (URL SAS Azure temporaire) pour l'affichage des images / aperçus
+    file_url:
+      d.signed_url ?? d.preview_url ?? d.download_url ?? d.urlStockage ?? "",
+    preview_url: d.signed_url ?? d.preview_url ?? d.urlStockage ?? "",
+    download_url: d.signed_url ?? d.download_url ?? d.urlStockage ?? "",
+    signed_url: d.signed_url ?? null,
     file_size: d.taille ?? 0,
     status: statusMap[d.statutValidation] ?? "pending",
     uploader: {
@@ -243,12 +246,14 @@ export const useUploadDriveDocument = () => {
   return { ...mutation, progress };
 };
 
-/** Téléchargement — ouvre l'URL Azure dans un nouvel onglet */
+/** Téléchargement — déclenche le navigateur sur l'URL Azure signée */
 export const useDownloadDriveDocument = () =>
   useMutation({
     mutationFn: async (doc: DriveDocument) => {
       const url = await downloadDriveDocument(doc.id);
-      window.open(url, "_blank");
+      if (url && typeof window !== "undefined") {
+        window.location.href = url;
+      }
       return url;
     },
     onError: () => toast.error("Impossible de télécharger le fichier."),

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://api.ensiashub.me/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

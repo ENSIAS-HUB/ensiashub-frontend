@@ -338,18 +338,7 @@ export default function EatsPage() {
                 <UtensilsCrossed className="size-5 text-[#B01817]" />
                 ENSIAS Eats
               </h2>
-              {/* FIX 5 — Cafeteria status banner */}
-              <div className="flex items-center gap-4 mt-1 mb-3">
-                <div className="flex items-center gap-1.5">
-                  <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse" />
-                  <span className="text-xs text-emerald-400 font-medium">
-                    Ouvert
-                  </span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  · Ferme à 15h00
-                </span>
-              </div>
+
             </div>
             <TabsList className="h-8 shrink-0">
               <TabsTrigger value="menu" className="text-xs h-7 gap-1.5">

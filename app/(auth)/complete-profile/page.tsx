@@ -67,7 +67,8 @@ function CompleteProfileForm() {
       );
 
       // Fetch the freshly-updated user from /me
-      const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost/api";
+      const base =
+        process.env.NEXT_PUBLIC_API_URL || "https://api.ensiashub.me/api";
       const meRes = await fetch(`${base}/me`, {
         headers: {
           Authorization: `Bearer ${token}`,

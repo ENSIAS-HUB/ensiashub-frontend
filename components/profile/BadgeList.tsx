@@ -15,12 +15,12 @@ const BADGE_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 interface BadgeListProps {
-  role: UserRole;
+  role?: UserRole;
   contextualRoles?: ProfileContextualRole[];
 }
 
 export function BadgeList({ role, contextualRoles }: BadgeListProps) {
-  const mainBadge = BADGE_CONFIG[role];
+  const mainBadge = role ? BADGE_CONFIG[role] : undefined;
 
   return (
     <div className="flex flex-wrap gap-2">
